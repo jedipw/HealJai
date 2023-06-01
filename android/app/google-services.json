@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "258022384649",
+    "project_id": "healjai-8f495",
+    "storage_bucket": "healjai-8f495.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:258022384649:android:660c025261c175a25c04d8",
+        "android_client_info": {
+          "package_name": "com.example.healjai"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA-4ADNFRMdrSch5YSnkQBbEg5YOIdSJ8I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
