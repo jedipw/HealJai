@@ -431,29 +431,34 @@ class _HealTalkViewState extends State<HealTalkView> {
                               ),
                             ),
                           ),
-                          Expanded(
-                            flex: 1,
-                            child: Padding(
-                              padding: const EdgeInsets.only(right: 8.0),
-                              child: Align(
-                                alignment: Alignment.bottomRight,
-                                child: canSend
-                                    ? TextButton(
-                                        onPressed: () {
-                                          sendMessage();
-                                        },
-                                        child: const Text(
-                                          'SEND',
-                                          style: TextStyle(
-                                            color: primaryPurple,
-                                            fontFamily: 'Poppins',
-                                            fontStyle: FontStyle.normal,
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 18.0,
+                          GestureDetector(
+                            onTap: () {
+                              _focusNode.requestFocus();
+                            },
+                            child: Expanded(
+                              flex: 1,
+                              child: Padding(
+                                padding: const EdgeInsets.only(right: 8.0),
+                                child: Align(
+                                  alignment: Alignment.bottomRight,
+                                  child: canSend
+                                      ? TextButton(
+                                          onPressed: () {
+                                            sendMessage();
+                                          },
+                                          child: const Text(
+                                            'SEND',
+                                            style: TextStyle(
+                                              color: primaryPurple,
+                                              fontFamily: 'Poppins',
+                                              fontStyle: FontStyle.normal,
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 18.0,
+                                            ),
                                           ),
-                                        ),
-                                      )
-                                    : const SizedBox(),
+                                        )
+                                      : const SizedBox(),
+                                ),
                               ),
                             ),
                           ),
