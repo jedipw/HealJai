@@ -150,42 +150,40 @@ class _RegisterViewState extends State<RegisterView> {
                                 passwordController.text.trim(),
                                 confirmPasswordController.text.trim(),
                               )) {
-                                () async {
-                                  try {
-                                    FirebaseFirestore firestore =
-                                        FirebaseFirestore.instance;
-                                    final email = emailController.text.trim();
-                                    final password =
-                                        passwordController.text.trim();
-                                    Navigator.of(context).pop();
-                                    final userCredential = await FirebaseAuth
-                                        .instance
-                                        .createUserWithEmailAndPassword(
-                                            email: email, password: password);
-                                    await firestore
-                                        .collection('user')
-                                        .doc(userCredential.user!.uid)
-                                        .set({
-                                          'isPsychiatrist': false,
-                                        })
-                                        .then((value) {})
-                                        .catchError((error) {})
-                                        .then((value) => Navigator.of(context)
-                                                .pushNamedAndRemoveUntil(
-                                              // navigates to homeRoute screen and removes previous routes
-                                              loginRoute,
-                                              (route) => false,
-                                            ));
-                                  } catch (e) {
-                                    // showErrorEmailModal(
-                                    //   context,
-                                    //   () {
-                                    //     Navigator.of(context).pop();
-                                    //     Navigator.of(context).pop();
-                                    //   },
-                                    // );
-                                  }
-                                };
+                                try {
+                                  FirebaseFirestore firestore =
+                                      FirebaseFirestore.instance;
+                                  final email = emailController.text.trim();
+                                  final password =
+                                      passwordController.text.trim();
+                                  final userCredential = await FirebaseAuth
+                                      .instance
+                                      .createUserWithEmailAndPassword(
+                                          email: email, password: password)
+                                      // await firestore
+                                      //     .collection('user')
+                                      //     .doc(userCredential.user!.uid)
+                                      //     .set({
+                                      //       'isPsychiatrist': false,
+                                      //     })
+                                      .then((value) {})
+                                      .catchError((error) {
+                                    print(error);
+                                  }).then((value) => Navigator.of(context)
+                                              .pushNamedAndRemoveUntil(
+                                            // navigates to homeRoute screen and removes previous routes
+                                            loginRoute,
+                                            (route) => false,
+                                          ));
+                                } catch (e) {
+                                  // showErrorEmailModal(
+                                  //   context,
+                                  //   () {
+                                  //     Navigator.of(context).pop();
+                                  //     Navigator.of(context).pop();
+                                  //   },
+                                  // );
+                                }
                               }
                             },
                             child: Row(
@@ -298,7 +296,7 @@ class _RegisterViewState extends State<RegisterView> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             Image.asset(
-                              'assets/icon/google.png',
+                              'assets/icons/google.png',
                               width: 30,
                               height: 30,
                             ),
@@ -324,7 +322,7 @@ class _RegisterViewState extends State<RegisterView> {
 
   bool _isValidEmail(String email) {
     // Validate the email using a regular expression
-    final emailRegex = RegExp(r'^[\w.+-]+@(gmail|hotmail)\.com$');
+    final emailRegex = RegExp(r'^[\w.-]+@[\w.-]+\.\w+$');
     return emailRegex.hasMatch(email);
   }
 
