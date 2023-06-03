@@ -7,6 +7,7 @@ import '../utilities/custom_text_field/reg_password_field.dart';
 import 'package:firebase_core/firebase_core.dart'; // Import Firebase Core
 import 'package:cloud_firestore/cloud_firestore.dart'; // Import FirebaseFirestore
 import 'package:firebase_auth/firebase_auth.dart'; // Import FirebaseAuth
+import 'package:flutter_svg/flutter_svg.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
@@ -73,198 +74,251 @@ class _RegisterViewState extends State<RegisterView> {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
+          backgroundColor: Colors.white,
           body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(0, 140, 0, 0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: const [
-                  Text(
-                    "Register",
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 40,
-                      fontWeight: FontWeight.w500,
-                      fontFamily: "Poppins",
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(top: 10),
-                    child: Text(
-                      "Create a new account",
-                      style: TextStyle(
-                        fontFamily: "Poppins",
-                        fontSize: 20,
-                        height: 1.5,
-                        color: Colors.black,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-                padding: const EdgeInsets.fromLTRB(40, 45, 40, 0),
-                child: Column(
-                  children: [
-                    // Don't have verification yet
-                    EmailTextField(
-                        controller: emailController,
-                        isEmailValid: _isEmailValid),
-                    RegPasswordField(
-                      passwordController: passwordController,
-                      passwordStat: _isValidPassword(
-                          passwordController.text.toString(),
-                          confirmPasswordController.text.toString(),
-                          "password"),
-                      isPasswordOk: _isPasswordOk,
-                    ),
-                    RegConPasswordField(
-                      passwordController: confirmPasswordController,
-                      passwordStat: _isValidPassword(
-                          confirmPasswordController.text.toString(),
-                          passwordController.text.toString(),
-                          "confirm password"),
-                      isPasswordOk: _isPasswordOk,
-                    ),
-                    Center(
-                      // centers child widget in the screen
-                      child: TextButton(
-                        style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStateProperty.all(lightPurple),
-                          shape: MaterialStateProperty.all(
-                              RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(40))),
-                          minimumSize:
-                              MaterialStateProperty.all(const Size(130, 43)),
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 140, 0, 0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: const [
+                      Text(
+                        "Register",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 40,
+                          fontWeight: FontWeight.w500,
+                          fontFamily: "Poppins",
                         ),
-                        onPressed: () async {
-                          if (_isEverythingOk(
-                            emailController.text.trim(),
-                            passwordController.text.trim(),
-                            confirmPasswordController.text.trim(),
-                          )) {
-                            () async {
-                              try {
-                                FirebaseFirestore firestore =
-                                    FirebaseFirestore.instance;
-                                final email = emailController.text.trim();
-                                final password = passwordController.text.trim();
-                                Navigator.of(context).pop();
-                                final userCredential = await FirebaseAuth
-                                    .instance
-                                    .createUserWithEmailAndPassword(
-                                        email: email, password: password);
-                                await firestore
-                                    .collection('user')
-                                    .doc(userCredential.user!.uid)
-                                    .set({
-                                      'isPsychiatrist': false,
-                                    })
-                                    .then((value) {})
-                                    .catchError((error) {})
-                                    .then((value) => Navigator.of(context)
-                                            .pushNamedAndRemoveUntil(
-                                          // navigates to homeRoute screen and removes previous routes
-                                          loginRoute,
-                                          (route) => false,
-                                        ));
-                              } catch (e) {
-                                // showErrorEmailModal(
-                                //   context,
-                                //   () {
-                                //     Navigator.of(context).pop();
-                                //     Navigator.of(context).pop();
-                                //   },
-                                // );
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(top: 10),
+                        child: Text(
+                          "Create a new account",
+                          style: TextStyle(
+                            fontFamily: "Poppins",
+                            fontSize: 20,
+                            height: 1.5,
+                            color: Colors.black,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                    padding: const EdgeInsets.fromLTRB(40, 50, 40, 0),
+                    child: Column(
+                      children: [
+                        // Don't have verification yet
+                        EmailTextField(
+                            controller: emailController,
+                            isEmailValid: _isEmailValid),
+                        RegPasswordField(
+                          passwordController: passwordController,
+                          passwordStat: _isValidPassword(
+                              passwordController.text.toString(),
+                              confirmPasswordController.text.toString(),
+                              "password"),
+                          isPasswordOk: _isPasswordOk,
+                        ),
+                        RegConPasswordField(
+                          passwordController: confirmPasswordController,
+                          passwordStat: _isValidPassword(
+                              confirmPasswordController.text.toString(),
+                              passwordController.text.toString(),
+                              "confirm password"),
+                          isPasswordOk: _isPasswordOk,
+                        ),
+                        Center(
+                          // centers child widget in the screen
+                          child: TextButton(
+                            style: ButtonStyle(
+                              backgroundColor:
+                                  MaterialStateProperty.all(lightPurple),
+                              shape: MaterialStateProperty.all(
+                                  RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(40))),
+                              minimumSize: MaterialStateProperty.all(
+                                  const Size(130, 43)),
+                            ),
+                            onPressed: () async {
+                              if (_isEverythingOk(
+                                emailController.text.trim(),
+                                passwordController.text.trim(),
+                                confirmPasswordController.text.trim(),
+                              )) {
+                                () async {
+                                  try {
+                                    FirebaseFirestore firestore =
+                                        FirebaseFirestore.instance;
+                                    final email = emailController.text.trim();
+                                    final password =
+                                        passwordController.text.trim();
+                                    Navigator.of(context).pop();
+                                    final userCredential = await FirebaseAuth
+                                        .instance
+                                        .createUserWithEmailAndPassword(
+                                            email: email, password: password);
+                                    await firestore
+                                        .collection('user')
+                                        .doc(userCredential.user!.uid)
+                                        .set({
+                                          'isPsychiatrist': false,
+                                        })
+                                        .then((value) {})
+                                        .catchError((error) {})
+                                        .then((value) => Navigator.of(context)
+                                                .pushNamedAndRemoveUntil(
+                                              // navigates to homeRoute screen and removes previous routes
+                                              loginRoute,
+                                              (route) => false,
+                                            ));
+                                  } catch (e) {
+                                    // showErrorEmailModal(
+                                    //   context,
+                                    //   () {
+                                    //     Navigator.of(context).pop();
+                                    //     Navigator.of(context).pop();
+                                    //   },
+                                    // );
+                                  }
+                                };
                               }
-                            };
-                          }
-                        },
-                        child: 
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
-                            Text(
-                              "Register",
-                              style: TextStyle(
-                                fontFamily: 'Poppins',
-                                fontWeight: FontWeight.w400,
-                                fontSize: 16,
-                                height: 1.0,
-                                color: Colors.black,
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: const [
+                                Text(
+                                  "Register",
+                                  style: TextStyle(
+                                    fontFamily: 'Poppins',
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 16,
+                                    height: 1.0,
+                                    color: Colors.black,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+
+                        // Have account text
+                        Padding(
+                          padding: const EdgeInsets.only(top: 80, bottom: 0),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      GestureDetector(
+                                        onTap: () {
+                                          Navigator.of(context)
+                                              .pushNamedAndRemoveUntil(
+                                            // navigates to homeRoute screen and removes previous routes
+                                            loginRoute,
+                                            (route) => false,
+                                          );
+                                        },
+                                        child: const Text(
+                                          "Already have an account?",
+                                          style: TextStyle(
+                                            fontFamily: "Poppins",
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: 15,
+                                            height: 1.0,
+                                            color: primaryPurple,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
                               ),
-                              textAlign: TextAlign.center,
+                            ],
+                          ),
+                        )
+                      ],
+                    )),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(50, 60, 40, 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [
+                      Flexible(
+                        child: Divider(
+                          color: Colors.black,
+                          thickness: 0.75,
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Text(
+                          'OR',
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ),
+                      Flexible(
+                        child: Divider(
+                          color: Colors.black,
+                          thickness: 0.75,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(40, 5, 40, 50),
+                  child: Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: grayDadada),
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    child: InkWell(
+                      onTap: () {
+                        // Handle Google login button tap
+                      },
+                      borderRadius: BorderRadius.circular(8),
+                      child: Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Image.asset(
+                              'assets/icon/google.png',
+                              width: 30,
+                              height: 30,
+                            ),
+                            const SizedBox(width: 8),
+                            const Text(
+                              'Continue with Google',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w400,
+                              ),
                             ),
                           ],
                         ),
                       ),
                     ),
-
-                    // Have account text
-                    Padding(
-                      padding: const EdgeInsets.only(top: 30, bottom: 50),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Text(
-                                "Already have an account?",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontFamily: 'Poppins',
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 15,
-                                  height: 1.5,
-                                  color: Color.fromRGBO(0, 0, 0, 0.45),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 10),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    GestureDetector(
-                                      onTap: () {
-                                        Navigator.of(context)
-                                            .pushNamedAndRemoveUntil(
-                                          // navigates to homeRoute screen and removes previous routes
-                                          loginRoute,
-                                          (route) => false,
-                                        );
-                                      },
-                                      child: const Text(
-                                        "Sign in",
-                                        style: TextStyle(
-                                          fontFamily: "Poppins",
-                                          fontWeight: FontWeight.w400,
-                                          fontSize: 14,
-                                          height: 1.0,
-                                          decoration: TextDecoration.underline,
-                                          // color: primaryOrange,
-                                        ),
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              )
-                            ],
-                          ),
-                        ],
-                      ),
-                    )
-                  ],
-                )),
-          ],
-        ),
-      )),
+                  ),
+                ),
+              ],
+            ),
+          )),
     );
   }
 

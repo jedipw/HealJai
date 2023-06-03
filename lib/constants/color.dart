@@ -7,3 +7,4 @@ const gray545454 = Color(0xFF545454);
 const grayBdbdbd = Color(0xFFBDBDBD);
 const grayDadada = Color(0xFFDADADA);
 const grayEbebeb = Color(0xFFEBEBEB);
+const grayLine = Color(0xFF7F7F7F);

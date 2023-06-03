@@ -17,20 +17,6 @@ class EmailTextField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
-          padding: EdgeInsets.fromLTRB(15, 0, 0, 3),
-          // child: Text(
-          //   "Email",
-          //   style: TextStyle(
-          //     fontFamily: 'Poppins',
-          //     fontWeight: FontWeight.w500,
-          //     fontSize: 17,
-          //     height: 1.5,
-          //     // color: primaryGray,
-          //   ),
-          //   textAlign: TextAlign.center,
-          // ),
-        ),
         TextField(
           controller: controller,
           keyboardType: isEmailValid ? TextInputType.emailAddress : null,
