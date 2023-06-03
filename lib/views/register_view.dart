@@ -7,7 +7,6 @@ import '../utilities/custom_text_field/reg_password_field.dart';
 import 'package:firebase_core/firebase_core.dart'; // Import Firebase Core
 import 'package:cloud_firestore/cloud_firestore.dart'; // Import FirebaseFirestore
 import 'package:firebase_auth/firebase_auth.dart'; // Import FirebaseAuth
-import 'package:flutter_svg/flutter_svg.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
@@ -56,8 +55,6 @@ class _RegisterViewState extends State<RegisterView> {
   final TextEditingController confirmPasswordController =
       TextEditingController();
 
-  bool _isFnameValid = true;
-  bool _isLnameValid = true;
   bool _isEmailValid = true;
   bool _isPasswordOk = true;
 
@@ -167,12 +164,11 @@ class _RegisterViewState extends State<RegisterView> {
                                       //       'isPsychiatrist': false,
                                       //     })
                                       .then((value) {})
-                                      .catchError((error) {
-                                    print(error);
-                                  }).then((value) => Navigator.of(context)
+                                      .catchError((error) {})
+                                      .then((value) => Navigator.of(context)
                                               .pushNamedAndRemoveUntil(
                                             // navigates to homeRoute screen and removes previous routes
-                                            loginRoute,
+                                            verifyEmailRoute,
                                             (route) => false,
                                           ));
                                 } catch (e) {
@@ -222,7 +218,7 @@ class _RegisterViewState extends State<RegisterView> {
                                           Navigator.of(context)
                                               .pushNamedAndRemoveUntil(
                                             // navigates to homeRoute screen and removes previous routes
-                                            loginRoute,
+                                            verifyEmailRoute,
                                             (route) => false,
                                           );
                                         },
@@ -286,9 +282,7 @@ class _RegisterViewState extends State<RegisterView> {
                       borderRadius: BorderRadius.circular(30),
                     ),
                     child: InkWell(
-                      onTap: () {
-                        // Handle Google login button tap
-                      },
+                      onTap: () {},
                       borderRadius: BorderRadius.circular(8),
                       child: Padding(
                         padding: const EdgeInsets.all(10.0),
