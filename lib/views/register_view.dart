@@ -218,7 +218,7 @@ class _RegisterViewState extends State<RegisterView> {
                                           Navigator.of(context)
                                               .pushNamedAndRemoveUntil(
                                             // navigates to homeRoute screen and removes previous routes
-                                            verifyEmailRoute,
+                                            loginRoute,
                                             (route) => false,
                                           );
                                         },

@@ -150,11 +150,8 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
                               side: MaterialStateProperty.all(const BorderSide(
                                 color: lightPurple,
                               )),
-                              overlayColor: MaterialStateProperty.all(
-                                  const Color.fromARGB(31, 178, 37, 225)),
-                              shadowColor: MaterialStateProperty.all(
-                                  const Color(0x3D000000)),
-                              elevation: MaterialStateProperty.all(4),
+                              overlayColor:
+                                  MaterialStateProperty.all(primaryPurple),
                             ),
                             onPressed: () async {
                               Navigator.of(context).pushNamedAndRemoveUntil(
