@@ -46,3 +46,5 @@ flutter:
     - assets/icon/google.png
 
   uses-material-design: true
+  assets:
+    - assets/icons/
