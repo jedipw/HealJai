@@ -39,6 +39,7 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
 
   @override
   Widget build(BuildContext context) {
+    FocusScope.of(context).unfocus();
     final User? user = FirebaseAuth.instance.currentUser;
     if (user == null) {
       return const Text("Loading...");
@@ -48,138 +49,144 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
         home: FocusScope(
           node: _node,
           child: Scaffold(
-            body: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(32, 60, 0, 10),
-                  child: Row(
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.of(context).pushNamedAndRemoveUntil(
-                            // navigates to homeRoute screen and removes previous routes
-                            loginRoute,
-                            (route) => false,
-                          );
-                        },
-                        child: const Icon(
-                          Icons.arrow_back_ios_new,
-                          color: primaryPurple,
-                          size: 32,
+            body: SingleChildScrollView(
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(32, 60, 0, 10),
+                    child: Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).pushNamedAndRemoveUntil(
+                              // navigates to homeRoute screen and removes previous routes
+                              loginRoute,
+                              (route) => false,
+                            );
+                          },
+                          child: const Icon(
+                            Icons.arrow_back_ios_new,
+                            color: primaryPurple,
+                            size: 32,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                SingleChildScrollView(
+                  SingleChildScrollView(
                     child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const SizedBox(height: 50),
-                      const SizedBox(
-                        width: 200,
-                        height: 200,
-                        child: Icon(
-                          Icons.mail_outline_outlined,
-                          size: 190,
-                          color: primaryPurple,
-                        ),
-                      ),
-                      const Text(
-                        "Verify your",
-                        style: TextStyle(
-                          fontFamily: "Poppins",
-                          fontWeight: FontWeight.w500,
-                          fontSize: 40,
-                          height: 1.0,
-                          color: Colors.black,
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      const Text(
-                        "email address",
-                        style: TextStyle(
-                          fontFamily: "Poppins",
-                          fontWeight: FontWeight.w500,
-                          fontSize: 40,
-                          height: 1.0,
-                          color: Colors.black,
-                        ),
-                      ),
-                      const SizedBox(height: 25),
-                      const Text(
-                        "You’ve entered",
-                        style: TextStyle(fontSize: 20),
-                      ),
-                      const SizedBox(height: 7),
-                      Row(
+                      child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text("${FirebaseAuth.instance.currentUser!.email}",
-                              style: const TextStyle(
-                                  fontSize: 20, fontWeight: FontWeight.bold)),
+                          const SizedBox(height: 50),
+                          SizedBox(
+                            width: 200,
+                            height: 200,
+                            child: Image.asset(
+                              'assets/icons/mail.png',
+                              width: 30,
+                              height: 30,
+                            ),
+                          ),
                           const Text(
-                            " as the",
+                            "Verify your",
+                            style: TextStyle(
+                              fontFamily: "Poppins",
+                              fontWeight: FontWeight.w500,
+                              fontSize: 40,
+                              height: 1.0,
+                              color: Colors.black,
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          const Text(
+                            "email address",
+                            style: TextStyle(
+                              fontFamily: "Poppins",
+                              fontWeight: FontWeight.w500,
+                              fontSize: 40,
+                              height: 1.0,
+                              color: Colors.black,
+                            ),
+                          ),
+                          const SizedBox(height: 25),
+                          const Text(
+                            "You’ve entered",
                             style: TextStyle(fontSize: 20),
-                          )
+                          ),
+                          const SizedBox(height: 7),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                  "${FirebaseAuth.instance.currentUser!.email}",
+                                  style: const TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold)),
+                              const Text(
+                                " as the",
+                                style: TextStyle(fontSize: 20),
+                              )
+                            ],
+                          ),
+                          const SizedBox(height: 7),
+                          const Text("email address for your account.",
+                              style: TextStyle(fontSize: 20)),
+                          const SizedBox(height: 7),
+                          const Text("Please verity this email",
+                              style: TextStyle(fontSize: 20)),
+                          const SizedBox(height: 7),
+                          const Text("address by pressing button below.",
+                              style: TextStyle(fontSize: 20)),
+                          const SizedBox(height: 25),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(40, 10, 40, 50),
+                            child: TextButton(
+                                style: ButtonStyle(
+                                  backgroundColor:
+                                      MaterialStateProperty.all(lightPurple),
+                                  shape: MaterialStateProperty.all(
+                                      RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(40),
+                                  )),
+                                  minimumSize: MaterialStateProperty.all(
+                                      const Size(300, 45)),
+                                  side: MaterialStateProperty.all(
+                                      const BorderSide(
+                                    color: lightPurple,
+                                  )),
+                                  overlayColor:
+                                      MaterialStateProperty.all(primaryPurple),
+                                ),
+                                onPressed: () async {
+                                  Navigator.of(context).pushNamedAndRemoveUntil(
+                                    loginRoute,
+                                    (route) => false,
+                                  );
+                                },
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: const [
+                                    Text(
+                                      "Send email verification",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontFamily: 'Poppins',
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 16,
+                                        height: 1,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                  ],
+                                )),
+                          ),
                         ],
                       ),
-                      const SizedBox(height: 7),
-                      const Text("email address for your account.",
-                          style: TextStyle(fontSize: 20)),
-                      const SizedBox(height: 7),
-                      const Text("Please verity this email",
-                          style: TextStyle(fontSize: 20)),
-                      const SizedBox(height: 7),
-                      const Text("address by pressing button below.",
-                          style: TextStyle(fontSize: 20)),
-                      const SizedBox(height: 25),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(40, 10, 40, 10),
-                        child: TextButton(
-                            style: ButtonStyle(
-                              backgroundColor:
-                                  MaterialStateProperty.all(lightPurple),
-                              shape: MaterialStateProperty.all(
-                                  RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(40),
-                              )),
-                              minimumSize: MaterialStateProperty.all(
-                                  const Size(300, 45)),
-                              side: MaterialStateProperty.all(const BorderSide(
-                                color: lightPurple,
-                              )),
-                              overlayColor:
-                                  MaterialStateProperty.all(primaryPurple),
-                            ),
-                            onPressed: () async {
-                              Navigator.of(context).pushNamedAndRemoveUntil(
-                                loginRoute,
-                                (route) => false,
-                              );
-                            },
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: const [
-                                Text(
-                                  "Send email verification",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontFamily: 'Poppins',
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 16,
-                                    height: 1,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                              ],
-                            )),
-                      )
-                    ],
+                    ),
                   ),
-                )),
-              ],
+                ],
+              ),
             ),
           ),
         ),

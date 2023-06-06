@@ -4,7 +4,6 @@ import '../../constants/color.dart';
 import '../utilities/custom_text_field/email_text_field.dart';
 import '../utilities/custom_text_field/reg_con_password_field.dart';
 import '../utilities/custom_text_field/reg_password_field.dart';
-import 'package:firebase_core/firebase_core.dart'; // Import Firebase Core
 import 'package:cloud_firestore/cloud_firestore.dart'; // Import FirebaseFirestore
 import 'package:firebase_auth/firebase_auth.dart'; // Import FirebaseAuth
 
@@ -13,47 +12,12 @@ class RegisterView extends StatefulWidget {
   @override
   State<RegisterView> createState() => _RegisterViewState();
 }
-// @override
-// Widget build(BuildContext context) {
-//   return Scaffold(
-//     body: Row(
-//       mainAxisAlignment: MainAxisAlignment.center,
-//       children: [
-//         Column(
-//           mainAxisAlignment: MainAxisAlignment.center,
-//           children: [
-//             const Text('Register page'),
-//             ElevatedButton(
-//               onPressed: () {
-//                 Navigator.of(context).pushNamedAndRemoveUntil(
-//                   // navigates to homeRoute screen and removes previous routes
-//                   loginRoute,
-//                   (route) => false,
-//                 );
-//               },
-//               child: const Text('Login'),
-//             ),
-//             ElevatedButton(
-//               onPressed: () {
-//                 Navigator.of(context).pushNamed(
-//                   verifyEmailRoute,
-//                 );
-//               },
-//               child: const Text('Verify Email'),
-//             ),
-//           ],
-//         ),
-//       ],
-//     ),
-//   );
-// }
-// }
-
 class _RegisterViewState extends State<RegisterView> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController =
       TextEditingController();
+  final ScrollController _scrollController = ScrollController();
 
   bool _isEmailValid = true;
   bool _isPasswordOk = true;
@@ -63,6 +27,7 @@ class _RegisterViewState extends State<RegisterView> {
     emailController.dispose();
     passwordController.dispose();
     confirmPasswordController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -73,6 +38,7 @@ class _RegisterViewState extends State<RegisterView> {
       child: Scaffold(
           backgroundColor: Colors.white,
           body: SingleChildScrollView(
+            controller: _scrollController,
             child: Column(
               children: [
                 Padding(
@@ -165,9 +131,24 @@ class _RegisterViewState extends State<RegisterView> {
                                       //     })
                                       .then((value) {})
                                       .catchError((error) {})
+                                      // .then((value) => Navigator.of(context)
+                                      //         .pushNamedAndRemoveUntil(
+                                      //       // navigates to homeRoute screen and removes previous routes
+                                      //       verifyEmailRoute,
+                                      //       (route) => false,
+                                      //     ));
+                                      .then((value) =>
+                                          _scrollController.animateTo(
+                                            0.0,
+                                            duration: const Duration(
+                                                milliseconds: 300),
+                                            curve: Curves.easeInOut,
+                                          ))
+                                      .then((value) =>
+                                          FocusScope.of(context).unfocus())
                                       .then((value) => Navigator.of(context)
                                               .pushNamedAndRemoveUntil(
-                                            // navigates to homeRoute screen and removes previous routes
+                                            //  loginRoute,
                                             verifyEmailRoute,
                                             (route) => false,
                                           ));
@@ -215,12 +196,23 @@ class _RegisterViewState extends State<RegisterView> {
                                     children: [
                                       GestureDetector(
                                         onTap: () {
-                                          Navigator.of(context)
-                                              .pushNamedAndRemoveUntil(
-                                            // navigates to homeRoute screen and removes previous routes
-                                            loginRoute,
-                                            (route) => false,
-                                          );
+                                          _scrollController
+                                              .animateTo(
+                                                0.0,
+                                                duration: const Duration(
+                                                    milliseconds: 300),
+                                                curve: Curves.easeInOut,
+                                              )
+                                              .then((value) =>
+                                                  FocusScope.of(context)
+                                                      .unfocus())
+                                              .then((value) =>
+                                                  Navigator.of(context)
+                                                      .pushNamedAndRemoveUntil(
+                                                    //  loginRoute,
+                                                    verifyEmailRoute,
+                                                    (route) => false,
+                                                  ));
                                         },
                                         child: const Text(
                                           "Already have an account?",
@@ -282,7 +274,9 @@ class _RegisterViewState extends State<RegisterView> {
                       borderRadius: BorderRadius.circular(30),
                     ),
                     child: InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        FocusScope.of(context).unfocus();
+                      },
                       borderRadius: BorderRadius.circular(8),
                       child: Padding(
                         padding: const EdgeInsets.all(10.0),
