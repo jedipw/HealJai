@@ -12,6 +12,7 @@ class RegisterView extends StatefulWidget {
   @override
   State<RegisterView> createState() => _RegisterViewState();
 }
+
 class _RegisterViewState extends State<RegisterView> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -209,8 +210,8 @@ class _RegisterViewState extends State<RegisterView> {
                                               .then((value) =>
                                                   Navigator.of(context)
                                                       .pushNamedAndRemoveUntil(
-                                                    //  loginRoute,
-                                                    verifyEmailRoute,
+                                                    loginRoute,
+                                                    // verifyEmailRoute,
                                                     (route) => false,
                                                   ));
                                         },

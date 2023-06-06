@@ -49,6 +49,7 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
         home: FocusScope(
           node: _node,
           child: Scaffold(
+            backgroundColor: Colors.white,
             body: SingleChildScrollView(
               child: Column(
                 children: [
@@ -58,6 +59,7 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
                       children: [
                         GestureDetector(
                           onTap: () {
+                            FirebaseAuth.instance.signOut();
                             Navigator.of(context).pushNamedAndRemoveUntil(
                               // navigates to homeRoute screen and removes previous routes
                               loginRoute,
@@ -159,6 +161,7 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
                                       MaterialStateProperty.all(primaryPurple),
                                 ),
                                 onPressed: () async {
+                                  FirebaseAuth.instance.signOut();
                                   Navigator.of(context).pushNamedAndRemoveUntil(
                                     loginRoute,
                                     (route) => false,
