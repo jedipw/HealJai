@@ -5,6 +5,7 @@ import 'package:healjai/constants/routes.dart';
 import '../services/auth/auth_backend_service.dart';
 import '../utilities/custom_text_field/lemail_text_field.dart';
 import '../utilities/custom_text_field/lpassword_text_field.dart';
+import '../utilities/modal.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -147,6 +148,7 @@ class _LoginViewState extends State<LoginView> {
                                 });
                               }
                               try {
+                                showLoadModal(context);
                                 bool isLoggedIn = await login(email, password);
                                 if (isLoggedIn) {
                                   // Login successful, navigate to the home screen
@@ -169,6 +171,9 @@ class _LoginViewState extends State<LoginView> {
                                     _isSomethingWrong = true;
                                   });
                                 }
+                              }
+                              finally{
+                                Navigator.of(context).pop();
                               }
                             } else {
                               if (emailController.text == "" ||
