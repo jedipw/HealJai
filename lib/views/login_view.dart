@@ -3,48 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:healjai/constants/color.dart';
 import 'package:healjai/constants/routes.dart';
 
+import '../services/auth/auth_backend_service.dart';
 import '../utilities/custom_text_field/lemail_text_field.dart';
 import '../utilities/custom_text_field/lpassword_text_field.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
-
-  // @override
-  // Widget build(BuildContext context) {
-  //   return Scaffold(
-  //     body: Row(
-  //       mainAxisAlignment: MainAxisAlignment.center,
-  //       children: [
-  //         Column(
-  //           mainAxisAlignment: MainAxisAlignment.center,
-  //           children: [
-  //             const Text('Log in page'),
-  //             ElevatedButton(
-  //               onPressed: () {
-  //                 Navigator.of(context).pushNamedAndRemoveUntil(
-  //                   // navigates to homeRoute screen and removes previous routes
-  //                   registerRoute,
-  //                   (route) => false,
-  //                 );
-  //               },
-  //               child: const Text('Register'),
-  //             ),
-  //             ElevatedButton(
-  //               onPressed: () {
-  //                 Navigator.of(context).pushNamedAndRemoveUntil(
-  //                   // navigates to homeRoute screen and removes previous routes
-  //                   homeRoute,
-  //                   (route) => false,
-  //                 );
-  //               },
-  //               child: const Text('Home'),
-  //             ),
-  //           ],
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
+  
   @override
   State<LoginView> createState() => _LoginViewState();
 }
@@ -56,7 +21,7 @@ class _LoginViewState extends State<LoginView> {
   FocusNode emailFocusNode = FocusNode();
   bool _isEmailValid = true;
   bool _isPasswordOk = true;
-  bool _isSomeThingWrong = false;
+  bool _isSomethingWrong = false;
   bool isKeyboardVisible = false;
 
   @override
@@ -146,7 +111,7 @@ class _LoginViewState extends State<LoginView> {
                           padding: const EdgeInsets.all(8.0),
                           child: Column(
                             children: [
-                              if (_isSomeThingWrong)
+                              if (_isSomethingWrong)
                                 const Text(
                                   "Please make sure that you log in with the correct email and password",
                                   style: TextStyle(
@@ -180,47 +145,30 @@ class _LoginViewState extends State<LoginView> {
                                 setState(() {
                                   _isEmailValid = true;
                                   _isPasswordOk = true;
-                                  _isSomeThingWrong = false;
+                                  _isSomethingWrong = false;
                                 });
                               }
                               try {
-                                try {
-                                  // This is sign in with firebase
-                                  await FirebaseAuth.instance
-                                      .signInWithEmailAndPassword(
-                                          email: email, password: password);
-                                  //     .then((value) {
-                                  //   Future.delayed(Duration.zero, () async {
-                                  //     await Navigator.of(context)
-                                  //         .pushNamedAndRemoveUntil(
-                                  //       // navigates to homeRoute screen and removes previous routes
-                                  //       homeRoute,
-                                  //       (route) => false,
-                                  //     );
-                                  //   });
-                                  // });
-                                } on FirebaseAuthException catch (_) {
-                                  if (mounted) {
-                                    setState(() {
-                                      _isSomeThingWrong = true;
-                                    });
-                                  }
-                                } finally {
-                                  if (_isSomeThingWrong == false) {
-                                    Future.delayed(Duration.zero, () async {
-                                      await Navigator.of(context)
-                                          .pushNamedAndRemoveUntil(
-                                        // navigates to homeRoute screen and removes previous routes
-                                        homeRoute,
-                                        (route) => false,
-                                      );
-                                    });
-                                  }
+                                bool isLoggedIn = await login(email, password);
+                                if (isLoggedIn) {
+                                  // Login successful, navigate to the home screen
+                                  Future.delayed(Duration.zero, () async {
+                                    await Navigator.pushNamedAndRemoveUntil(
+                                      context,
+                                      homeRoute,
+                                      (route) => false,
+                                    );
+                                  });
+                                } else {
+                                  // Show an error message or perform any other action for login failure
+                                  setState(() {
+                                    _isSomethingWrong = true;
+                                  });
                                 }
                               } on FirebaseAuthException catch (_) {
                                 if (mounted) {
                                   setState(() {
-                                    _isSomeThingWrong = true;
+                                    _isSomethingWrong = true;
                                   });
                                 }
                               }
@@ -255,7 +203,7 @@ class _LoginViewState extends State<LoginView> {
                               if (_isPasswordOk && _isEmailValid) {
                                 if (mounted) {
                                   setState(() {
-                                    _isSomeThingWrong = true;
+                                    _isSomethingWrong = true;
                                   });
                                 }
                               }
