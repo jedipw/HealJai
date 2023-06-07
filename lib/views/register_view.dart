@@ -4,8 +4,6 @@ import '../../constants/color.dart';
 import '../utilities/custom_text_field/email_text_field.dart';
 import '../utilities/custom_text_field/reg_con_password_field.dart';
 import '../utilities/custom_text_field/reg_password_field.dart';
-import 'package:cloud_firestore/cloud_firestore.dart'; // Import FirebaseFirestore
-import 'package:firebase_auth/firebase_auth.dart'; // Import FirebaseAuth
 import '../services/auth/auth_backend_service.dart';
 
 class RegisterView extends StatefulWidget {
@@ -23,6 +21,7 @@ class _RegisterViewState extends State<RegisterView> {
   int uniqueRandomNumber = 0;
   bool _isEmailValid = true;
   bool _isPasswordOk = true;
+  bool _isHaveAccount = false;
 
   @override
   void dispose() {
@@ -44,7 +43,7 @@ class _RegisterViewState extends State<RegisterView> {
             child: Column(
               children: [
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 140, 0, 0),
+                  padding: const EdgeInsets.fromLTRB(0, 120, 0, 0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: const [
@@ -97,6 +96,22 @@ class _RegisterViewState extends State<RegisterView> {
                               "confirm password"),
                           isPasswordOk: _isPasswordOk,
                         ),
+                        // Have account text
+                         Padding(
+                          padding: const EdgeInsets.fromLTRB(8, 0, 0, 10),
+                          child: Row(
+                            children: [
+                              if (_isHaveAccount)
+                                const Text(
+                                  "Email already registered or invalid.",
+                                  style: TextStyle(
+                                    color: Colors.red,
+                                    fontFamily: 'Poppins',
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
                         Center(
                           // centers child widget in the screen
                           child: TextButton(
@@ -119,39 +134,34 @@ class _RegisterViewState extends State<RegisterView> {
                                   final email = emailController.text.trim();
                                   final password =
                                       passwordController.text.trim();
-                                  final userCredential = await FirebaseAuth
-                                      .instance
-                                      .createUserWithEmailAndPassword(
-                                          email: email, password: password)
-                                      // await firestore
-                                      //     .collection('user')
-                                      //     .doc(userCredential.user!.uid)
-                                      //     .set({
-                                      //       'isPsychiatrist': false,
-                                      //     })
-                                      .then((value) {})
-                                      .catchError((error) {})
-                                      // .then((value) => Navigator.of(context)
-                                      //         .pushNamedAndRemoveUntil(
-                                      //       // navigates to homeRoute screen and removes previous routes
-                                      //       verifyEmailRoute,
-                                      //       (route) => false,
-                                      //     ));
-                                      .then((value) =>
-                                          _scrollController.animateTo(
-                                            0.0,
-                                            duration: const Duration(
-                                                milliseconds: 300),
-                                            curve: Curves.easeInOut,
-                                          ))
-                                      .then((value) =>
-                                          FocusScope.of(context).unfocus())
-                                      .then((value) => Navigator.of(context)
-                                              .pushNamedAndRemoveUntil(
-                                            //  loginRoute,
-                                            verifyEmailRoute,
-                                            (route) => false,
-                                          ));
+                                  bool isRegister =
+                                      await register(email, password);
+                                  if (isRegister) {
+                                    setState(() {
+                                      _isHaveAccount = false;
+                                    });
+                                    _scrollController
+                                        .animateTo(
+                                          0.0,
+                                          duration:
+                                              const Duration(milliseconds: 300),
+                                          curve: Curves.easeInOut,
+                                        )
+                                        .then((value) =>
+                                            FocusScope.of(context).unfocus())
+                                        .then((value) => Navigator.of(context)
+                                                .pushNamedAndRemoveUntil(
+                                              //  loginRoute,
+                                              verifyEmailRoute,
+                                              (route) => false,
+                                            ));
+                                  } else {
+                                    if (mounted) {
+                                      setState(() {
+                                        _isHaveAccount = true;
+                                      });
+                                    }
+                                  }
                                 } catch (_) {}
                               }
                             },
@@ -173,8 +183,6 @@ class _RegisterViewState extends State<RegisterView> {
                             ),
                           ),
                         ),
-
-                        // Have account text
                         Padding(
                           padding: const EdgeInsets.only(top: 80, bottom: 0),
                           child: Column(

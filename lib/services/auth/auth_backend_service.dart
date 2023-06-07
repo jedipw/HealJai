@@ -30,17 +30,17 @@ int generateRandomNumber() {
 
 Future<int> getUniqueRandomNumber() async {
   int randomNum = generateRandomNumber();
-  bool isDuplicate = await checkIfNumberExists(randomNum);
+  bool isDuplicate = await checkIfNumberExists(randomNum.toString());
 
   while (isDuplicate) {
     randomNum = generateRandomNumber();
-    isDuplicate = await checkIfNumberExists(randomNum);
+    isDuplicate = await checkIfNumberExists(randomNum.toString());
   }
 
   return randomNum;
 }
 
-Future<bool> checkIfNumberExists(int number) async {
+Future<bool> checkIfNumberExists(String number) async {
   QuerySnapshot querySnapshot = await FirebaseFirestore.instance
       .collection('UserTagNumber')
       .where('userTagNumber', isEqualTo: number)
@@ -49,7 +49,7 @@ Future<bool> checkIfNumberExists(int number) async {
   return querySnapshot.docs.isNotEmpty;
 }
 
-Future<void> saveUserTagNumber(String userId, int tagNumber) async {
+Future<void> saveUserTagNumber(String userId, String tagNumber) async {
   await FirebaseFirestore.instance
       .collection('UserTagNumber')
       .doc(userId)
@@ -61,4 +61,21 @@ Future<void> saveUserData(String userId) async {
       .collection('User')
       .doc(userId)
       .set({'isPsychiatrist': false});
+}
+
+Future<bool> register(String email, String password) async {
+  String tag = (await getUniqueRandomNumber()).toString();
+  try {
+    final userCredential = await FirebaseAuth.instance
+        .createUserWithEmailAndPassword(email: email, password: password);
+    saveUserData(userCredential.user!.uid);
+    saveUserTagNumber(userCredential.user!.uid,tag );
+    // Registration successful
+    return true;
+  } on FirebaseAuthException catch (_) {
+    // Registration failed
+    return false;
+  } catch (_) {
+    return false;
+  }
 }
