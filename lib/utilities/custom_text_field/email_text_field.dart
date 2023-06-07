@@ -18,6 +18,7 @@ class EmailTextField extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         TextField(
+          cursorColor: darkPurple,
           controller: controller,
           keyboardType: isEmailValid ? TextInputType.emailAddress : null,
           obscureText: isObscure,
