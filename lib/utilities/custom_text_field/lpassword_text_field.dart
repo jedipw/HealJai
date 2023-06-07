@@ -22,7 +22,6 @@ class PasswordTextField extends StatelessWidget {
           decoration: const BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.all(Radius.circular(40)),
-           
           ),
           child: TextField(
             controller: passwordController,
@@ -30,6 +29,10 @@ class PasswordTextField extends StatelessWidget {
               fontFamily: 'Poppins',
             ),
             decoration: const InputDecoration(
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20)),
+                borderSide: BorderSide(color: primaryPurple),
+              ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.all(Radius.circular(20)),
                 borderSide: BorderSide(color: grayDadada),
