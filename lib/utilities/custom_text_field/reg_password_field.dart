@@ -26,6 +26,10 @@ class RegPasswordField extends StatelessWidget {
             fontFamily: 'Poppins',
           ),
           decoration: const InputDecoration(
+             focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(20)),
+              borderSide: BorderSide(color: primaryPurple),
+            ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.all(Radius.circular(20)),
               borderSide: BorderSide(color: grayDadada),

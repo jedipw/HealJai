@@ -5,6 +5,7 @@ import '../utilities/custom_text_field/email_text_field.dart';
 import '../utilities/custom_text_field/reg_con_password_field.dart';
 import '../utilities/custom_text_field/reg_password_field.dart';
 import '../services/auth/auth_backend_service.dart';
+import '../utilities/modal.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
@@ -131,6 +132,7 @@ class _RegisterViewState extends State<RegisterView> {
                                 confirmPasswordController.text.trim(),
                               )) {
                                 try {
+                                  showLoadModal(context);
                                   final email = emailController.text.trim();
                                   final password =
                                       passwordController.text.trim();
@@ -163,6 +165,9 @@ class _RegisterViewState extends State<RegisterView> {
                                     }
                                   }
                                 } catch (_) {}
+                                finally{
+                                  Navigator.of(context).pop();
+                                }
                               }
                             },
                             child: Row(
