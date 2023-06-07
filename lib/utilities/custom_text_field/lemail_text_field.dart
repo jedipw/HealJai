@@ -26,6 +26,7 @@ class EmailTextField extends StatelessWidget {
             borderRadius: BorderRadius.all(Radius.circular(40)),
           ),
           child: TextField(
+            cursorColor: darkPurple,
             controller: controller,
             autofocus: true,
             keyboardType: isEmailValid ? TextInputType.emailAddress : null,

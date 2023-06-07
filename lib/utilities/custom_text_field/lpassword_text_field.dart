@@ -24,6 +24,7 @@ class PasswordTextField extends StatelessWidget {
             borderRadius: BorderRadius.all(Radius.circular(40)),
           ),
           child: TextField(
+            cursorColor: darkPurple,
             controller: passwordController,
             style: const TextStyle(
               fontFamily: 'Poppins',
