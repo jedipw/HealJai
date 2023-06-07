@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:healjai/constants/routes.dart';
+import 'package:healjai/services/auth/auth_backend_service.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({super.key});
@@ -33,6 +34,16 @@ class HomeView extends StatelessWidget {
                   );
                 },
                 child: const Text('Login'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  logout().then((value) =>  Navigator.of(context).pushNamedAndRemoveUntil(
+                    // navigates to homeRoute screen and removes previous routes
+                    loginRoute,
+                    (route) => false,
+                  ));
+                },
+                child: const Text('Logout'),
               ),
             ],
           ),
