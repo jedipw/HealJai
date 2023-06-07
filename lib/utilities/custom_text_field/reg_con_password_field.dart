@@ -19,6 +19,7 @@ class RegConPasswordField extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         TextField(
+          cursorColor: darkPurple,
           controller: passwordController,
           style: const TextStyle(
             fontFamily: 'Poppins',

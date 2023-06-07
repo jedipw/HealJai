@@ -21,12 +21,13 @@ class RegPasswordField extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         TextField(
+          cursorColor: darkPurple,
           controller: passwordController,
           style: const TextStyle(
             fontFamily: 'Poppins',
           ),
           decoration: const InputDecoration(
-             focusedBorder: OutlineInputBorder(
+            focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.all(Radius.circular(20)),
               borderSide: BorderSide(color: primaryPurple),
             ),
