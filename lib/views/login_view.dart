@@ -2,14 +2,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:healjai/constants/color.dart';
 import 'package:healjai/constants/routes.dart';
-
 import '../services/auth/auth_backend_service.dart';
 import '../utilities/custom_text_field/lemail_text_field.dart';
 import '../utilities/custom_text_field/lpassword_text_field.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
-  
+
   @override
   State<LoginView> createState() => _LoginViewState();
 }
@@ -137,8 +136,7 @@ class _LoginViewState extends State<LoginView> {
                           final email = emailController.text;
                           final password = passwordController.text;
                           if (_formKey.currentState!.validate()) {
-                            // Do something if the form is valid
-                            // For example, check if the email is valid
+                            //Check if form is valid
                             if (_isValidEmail(emailController.text) &&
                                 passwordController.value.text.length >= 6) {
                               if (mounted) {

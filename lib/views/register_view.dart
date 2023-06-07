@@ -210,7 +210,6 @@ class _RegisterViewState extends State<RegisterView> {
                                                   Navigator.of(context)
                                                       .pushNamedAndRemoveUntil(
                                                     loginRoute,
-                                                    // verifyEmailRoute,
                                                     (route) => false,
                                                   ));
                                         },

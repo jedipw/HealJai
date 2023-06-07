@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../../constants/color.dart';
 
 class RegPasswordField extends StatelessWidget {
