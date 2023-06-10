@@ -163,7 +163,8 @@ class FirebaseCloudStorage {
             profilePic: profilePic));
 
         if ((isPsychiatrist && senderUserId == data[userIdField]) ||
-            (!isPsychiatrist && senderUserId != data[userIdField])) {
+            (!isPsychiatrist && senderUserId != data[userIdField]) &&
+                read == false) {
           final DocumentSnapshot<Map<String, dynamic>> doc =
               await chatMessage.doc(chatData.docs[i].id).get();
           doc.reference.update({
