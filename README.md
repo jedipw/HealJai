@@ -39,12 +39,12 @@ Try not to run our code on a browser since we developed our project for mobile a
 
 ## 4. Psychiatrist's accounts
 There are two psychiatrist accounts provided for you.
-1. **Dr. Wararattana Wara**
-   **Email:** staff1@email.com
+1. **Dr. Wararattana Wara**<br />
+   **Email:** staff1@email.com<br />
    **Password:** 12345678
 
-2. **Dr. Pornpimon Ponpimorn**
-   **Email:** staff2@email.com
+2. **Dr. Pornpimon Ponpimorn**<br />
+   **Email:** staff2@email.com<br />
    **Password:** 12345678
 
 
