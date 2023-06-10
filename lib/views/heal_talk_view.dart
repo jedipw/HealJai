@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:healjai/constants/color.dart';
 import 'package:healjai/services/cloud/firebase_cloud_storage.dart';
@@ -14,7 +16,6 @@ class HealTalkView extends StatefulWidget {
 class _HealTalkViewState extends State<HealTalkView> {
   bool _isPsychiatrist = false;
   bool _isRoleLoaded = false;
-  bool _isError = false;
 
   @override
   void initState() {
@@ -43,17 +44,7 @@ class _HealTalkViewState extends State<HealTalkView> {
         );
       }
     } catch (e) {
-      handleError();
-    }
-  }
-
-  void handleError() {
-    if (mounted) {
-      setState(
-        () {
-          _isError = true;
-        },
-      );
+      log(e.toString());
     }
   }
 
