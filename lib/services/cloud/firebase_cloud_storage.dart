@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:healjai/services/cloud/cloud_storage_constants.dart';
 import 'package:healjai/services/cloud/cloud_storage_exceptions.dart';
 
@@ -11,7 +12,7 @@ class FirebaseCloudStorage {
 
   Future<bool> getIsPsychiatrist() async {
     try {
-      const userId = 'MSaytbm2Y3jYa6BzpHUu';
+      final userId = FirebaseAuth.instance.currentUser!.uid;
       DocumentSnapshot documentSnapshot = await user.doc(userId).get();
       return documentSnapshot[isPsychiatristField];
     } catch (e) {
@@ -22,13 +23,14 @@ class FirebaseCloudStorage {
 
   Future<void> createUserChatMessage(String text) async {
     try {
-      const userId = 'MSaytbm2Y3jYa6BzpHUu';
+      final userId = FirebaseAuth.instance.currentUser!.uid;
+
       chatMessage.add({
         isReadField: false,
         sendAtField: DateTime.now(),
         senderIdField: userId,
         textField: text,
-        userId: userId,
+        userIdField: userId,
       });
     } catch (e) {
       log(e.toString());
@@ -38,17 +40,21 @@ class FirebaseCloudStorage {
 
   Future<void> createPsychiatristChatMessage(String text, String userId) async {
     try {
-      const senderId = 'MSaytbm2Y3jYa6BzpHUu';
-      chatMessage.add({
-        isReadField: false,
-        sendAtField: DateTime.now(),
-        senderIdField: senderId,
-        textField: text,
-        userId: userId,
-      });
+      final senderId = FirebaseAuth.instance.currentUser!.uid;
+
+      chatMessage.add(
+        {
+          isReadField: false,
+          sendAtField: DateTime.now(),
+          senderIdField: senderId,
+          textField: text,
+          userId: userId,
+        },
+      );
     } catch (e) {
       log(e.toString());
       throw CouldNotCreateException();
     }
   }
+
 }
