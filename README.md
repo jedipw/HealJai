@@ -43,7 +43,7 @@ There are two psychiatrist accounts provided for you.
    **Email:** staff1@email.com<br />
    **Password:** 12345678
 
-2. **Dr. Pornpimon Ponpimorn**<br />
+2. **Dr. Pornpimon Kusonbhun**<br />
    **Email:** staff2@email.com<br />
    **Password:** 12345678
 
