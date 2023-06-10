@@ -224,42 +224,4 @@ class HomeView extends StatelessWidget {
     );
   }
 }
-//       body: Row(
-//   mainAxisAlignment: MainAxisAlignment.center,
-//   children: [
-//     Column(
-//       mainAxisAlignment: MainAxisAlignment.center,
-//       children: [
-//         IconButton(
-//           icon: const Icon(Icons.home),
-//           onPressed: () {
-//             // Add your home icon onPressed logic here
-//           },
-//         ),
-//         ElevatedButton(
-//           onPressed: () {
-//             Navigator.of(context).pushNamed(
-//               // navigates to paymentRoute screen and removes previous routes
-//               paymentRoute,
-//             );
-//           },
-//           child: const Icon(Icons.notifications),
-//         ),
-//         ElevatedButton(
-//           onPressed: () {
-//             Navigator.of(context).pushNamedAndRemoveUntil(
-//               // navigates to loginRoute screen and removes previous routes
-//               loginRoute,
-//               (route) => false,
-//             );
-//           },
-//           child: const Text('Logout'),
-//         ),
-//       ],
-//     ),
-//   ],
-// ),
 
-//     );
-//   }
-// }
