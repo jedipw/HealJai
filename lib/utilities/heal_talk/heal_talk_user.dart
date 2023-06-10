@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:healjai/constants/color.dart';
+import 'package:healjai/services/cloud/firebase_cloud_storage.dart';
 
 class HealTalkUser extends StatefulWidget {
   const HealTalkUser({super.key});
@@ -480,11 +481,12 @@ class _HealTalkUserState extends State<HealTalkUser> {
     );
   }
 
-  void sendMessage() {
+  void sendMessage() async {
     _scrollToBottom();
+    String message = textController.text;
     setState(() {
       canSend = false;
-      String message = textController.text;
+
       textController.clear();
       String currentUser =
           'UserA'; // Replace 'UserA' with the user's actual name or ID
@@ -508,6 +510,7 @@ class _HealTalkUserState extends State<HealTalkUser> {
         },
       ); // Add the new message at the beginning of the list
     });
+    await FirebaseCloudStorage().createUserChatMessage(message);
   }
 
   String formatTime(DateTime time) {
