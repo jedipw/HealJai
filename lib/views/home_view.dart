@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:healjai/constants/color.dart';
 import 'package:healjai/constants/routes.dart';
 import 'package:healjai/services/auth/auth_backend_service.dart';
+import 'package:healjai/utilities/custom_navbar.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({super.key});
@@ -15,15 +16,17 @@ class HomeView extends StatelessWidget {
         child: AppBar(
           backgroundColor: Colors.white,
           elevation: 0,
-           bottom: PreferredSize(
-            preferredSize: const Size.fromHeight(4), // Set the thickness of the line
+          bottom: PreferredSize(
+            preferredSize:
+                const Size.fromHeight(4), // Set the thickness of the line
             child: Container(
               height: 1, // Set the height of the line
-              color: const Color.fromARGB(255, 210, 210, 210), // Set the color of the line
+              color: const Color.fromARGB(
+                  255, 210, 210, 210), // Set the color of the line
             ),
           ),
           title: const Padding(
-            padding: EdgeInsets.only(top: 20, left: 5),
+            padding: EdgeInsets.only(top: 20, left: 12),
             child: Align(
               alignment: Alignment.centerLeft,
               child: Text(
@@ -40,7 +43,7 @@ class HomeView extends StatelessWidget {
           ),
           actions: [
             Container(
-              margin: const EdgeInsets.only(top: 12),
+              margin: const EdgeInsets.only(top: 16, right: 8),
               child: IconButton(
                 onPressed: () {
                   // Add your chat icon onPressed logic here
@@ -183,7 +186,8 @@ class HomeView extends StatelessWidget {
                               Align(
                                 alignment: Alignment.bottomLeft,
                                 child: Padding(
-                                  padding: const EdgeInsets.fromLTRB(24, 8, 16, 8),
+                                  padding:
+                                      const EdgeInsets.fromLTRB(24, 8, 16, 8),
                                   child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
@@ -192,7 +196,7 @@ class HomeView extends StatelessWidget {
                                       RichText(
                                         text: TextSpan(
                                           style: const TextStyle(
-                                              fontSize: 16,
+                                              fontSize: 14,
                                               color: Colors.black,
                                               fontFamily: 'Poppins'),
                                           children: [
@@ -222,64 +226,62 @@ class HomeView extends StatelessWidget {
                 }),
           ),
           Container(
-            decoration: const BoxDecoration(
-              border: Border(
-                top: BorderSide(
-                    color: Color.fromARGB(255, 210, 210, 210), width: 1),
+              decoration: const BoxDecoration(
+                border: Border(
+                  top: BorderSide(
+                      color: Color.fromARGB(255, 210, 210, 210), width: 1),
+                ),
               ),
-            ),
-            child: BottomNavigationBar(
-              items: [
-                const BottomNavigationBarItem(
-                  icon: Icon(
-                    Icons.home_filled,
-                    size: 32,
-                  ),
-                  label: '',
-                ),
-                BottomNavigationBarItem(
-                  icon: InkWell(
-                    onTap: () {},
-                    child: Image.asset(
-                      'assets/icons/noti.png', // Replace with the path to your custom image
-                      width: 32,
-                      height: 32,
-                    ),
-                  ),
-                  label: '',
-                ),
-                const BottomNavigationBarItem(
-                  icon: Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Icon(
-                      Icons.menu_rounded,
+              child: CustomBottomNavigationBar(
+                items: [
+                  const BottomNavigationBarItem(
+                    icon: Icon(
+                      Icons.home_filled,
                       size: 32,
-                      color: Color.fromARGB(255, 194, 194, 194),
+                      color: primaryPurple,
                     ),
+                    label: '',
                   ),
-                  label: '',
-                ),
-              ],
-              selectedItemColor: primaryPurple,
-              onTap: (index) {
-                if (index == 0) {
-                  // Handle home icon pressed
-                } else if (index == 1) {
-                  Navigator.of(context).pushNamed(
-                    // navigates to paymentRoute screen and removes previous routes
-                    paymentRoute,
-                  );
-                } else if (index == 2) {
-                  logout().then(
-                      (value) => Navigator.of(context).pushNamedAndRemoveUntil(
-                            // navigates to homeRoute screen and removes previous routes
-                            loginRoute,
-                            (route) => false,
-                          ));
-                }
-              },
-            ),
-          )
+                  BottomNavigationBarItem(
+                    icon: InkWell(
+                      onTap: () {},
+                      child: Image.asset(
+                        'assets/icons/noti.png', // Replace with the path to your custom image
+                        width: 28,
+                        height: 28,
+                      ),
+                    ),
+                    label: '',
+                  ),
+                  const BottomNavigationBarItem(
+                    icon: Padding(
+                      padding: EdgeInsets.only(top: 1),
+                      child: Icon(
+                        Icons.menu_rounded,
+                        size: 32,
+                        color: Color.fromARGB(255, 194, 194, 194),
+                      ),
+                    ),
+                    label: '',
+                  ),
+                ],
+                selectedItemColor: primaryPurple,
+                onTap: (index) {
+                  // Handle item tap
+                  if (index == 0) {
+                    // Handle home icon pressed
+                  } else if (index == 1) {
+                    // Handle ring icon pressed
+                  } else if (index == 2) {
+                    logout().then((value) =>
+                        Navigator.of(context).pushNamedAndRemoveUntil(
+                          // navigates to homeRoute screen and removes previous routes
+                          loginRoute,
+                          (route) => false,
+                        ));
+                  }
+                },
+              ))
         ],
       ),
 
