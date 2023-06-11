@@ -104,7 +104,6 @@ class _HealTalkPsyChatState extends State<HealTalkPsyChat> {
 
   @override
   Widget build(BuildContext context) {
-    log(widget.userName.substring(6));
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: PreferredSize(
