@@ -140,6 +140,7 @@ class _PaymentStepOneState extends State<PaymentStepOne> {
                 SizedBox(width: 8),
                 Expanded(
                   child: Text(
+                    
                     'Change or cancel your plan anytime.',
                     style: TextStyle(
                       fontFamily: 'Poppins',
