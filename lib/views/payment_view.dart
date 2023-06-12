@@ -92,7 +92,7 @@ class _PaymentViewState extends State<PaymentView> {
                 },
                 packageIndex: _packageIndex,
               )
-            : const PaymentStepTwo(),
+            : PaymentStepTwo(packageIndex: _packageIndex),
       ),
     );
   }
