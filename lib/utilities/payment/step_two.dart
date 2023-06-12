@@ -338,6 +338,7 @@ class PaymentStepTwo extends StatelessWidget {
         Container(
           width: 220,
           height: 50,
+          margin: const EdgeInsets.only(bottom: 20),
           decoration: BoxDecoration(
             color: primaryPurple,
             borderRadius: BorderRadius.circular(30),
