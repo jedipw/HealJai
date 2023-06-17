@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:healjai/constants/color.dart';
 import 'package:healjai/constants/routes.dart';
-import '../services/auth/auth_backend_service.dart';
+import '../services/auth/auth.dart';
 import '../utilities/custom_text_field/lemail_text_field.dart';
 import '../utilities/custom_text_field/lpassword_text_field.dart';
 import '../utilities/modal.dart';

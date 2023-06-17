@@ -4,7 +4,7 @@ import '../../constants/color.dart';
 import '../utilities/custom_text_field/email_text_field.dart';
 import '../utilities/custom_text_field/reg_con_password_field.dart';
 import '../utilities/custom_text_field/reg_password_field.dart';
-import '../services/auth/auth_backend_service.dart';
+import '../services/auth/auth.dart';
 import '../utilities/modal.dart';
 
 class RegisterView extends StatefulWidget {
