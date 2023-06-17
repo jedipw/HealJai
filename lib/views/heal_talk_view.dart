@@ -1,10 +1,12 @@
+import 'dart:convert';
 import 'dart:developer';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:healjai/constants/color.dart';
-import 'package:healjai/services/cloud/firebase_cloud_storage.dart';
 import 'package:healjai/utilities/heal_talk/heal_talk_psychiatrist_all_chat.dart';
 import 'package:healjai/utilities/heal_talk/heal_talk_user.dart';
+import 'package:http/http.dart' as http;
 
 class HealTalkView extends StatefulWidget {
   const HealTalkView({super.key});
@@ -31,17 +33,23 @@ class _HealTalkViewState extends State<HealTalkView> {
 
   Future<void> _getIsPsychiatristData() async {
     try {
-      bool userData = await FirebaseCloudStorage().getIsPsychiatrist();
-      bool userHasRole = userData;
+      final userId = FirebaseAuth.instance.currentUser!.uid;
+      final url = Uri.parse(
+          'http://4.194.248.57:3000/api/getIsPsychiatrist?userId=$userId');
+      final response = await http.get(url);
 
-      // Update the state
-      if (mounted) {
+      if (response.statusCode == 200 && mounted) {
+        // Successful response
+        final data = json.decode(response.body);
         setState(
           () {
-            _isPsychiatrist = userHasRole;
+            _isPsychiatrist = data['isPsychiatrist'];
             _isRoleLoaded = true;
           },
         );
+      } else {
+        // Error response
+        log('Request failed with status code ${response.statusCode}');
       }
     } catch (e) {
       log(e.toString());

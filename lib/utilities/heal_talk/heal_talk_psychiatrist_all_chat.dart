@@ -1,10 +1,12 @@
 import 'dart:developer';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:healjai/constants/color.dart';
-import 'package:healjai/services/cloud/firebase_cloud_storage.dart';
 import 'package:healjai/utilities/heal_talk/heal_talk_psychiatrist_chat.dart';
 import 'package:healjai/utilities/types.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class HealTalkPsyAllChat extends StatefulWidget {
   const HealTalkPsyAllChat({super.key});
@@ -22,71 +24,48 @@ class _HealTalkPsyAllChatState extends State<HealTalkPsyAllChat> {
     chats = getAllChatsDataStream();
   }
 
-  Stream<List<AllChatData>> getAllChatsDataStream() async* {
-    while (true) {
+  Stream<List<AllChatData>> getAllChatsDataStream() {
+    const apiUrl = 'http://4.194.248.57:3000/api/getAllChat';
+    final currentUserId = FirebaseAuth.instance.currentUser!.uid;
+
+    // Construct the query parameters
+    final queryParams = {
+      'currentUserId': currentUserId,
+    };
+
+    // Construct the API URL with query parameters
+    final url = Uri.parse(apiUrl).replace(queryParameters: queryParams);
+
+    return Stream.periodic(const Duration(seconds: 1)).asyncExpand((_) async* {
       try {
-        List<AllChatData> userAllChatMessageData =
-            await FirebaseCloudStorage().getAllChat();
-        yield userAllChatMessageData;
+        // Make the HTTP GET request
+        final response = await http.get(url);
+        if (response.statusCode == 200) {
+          // Successful response
+          final responseData = json.decode(response.body) as List<dynamic>;
+
+          // Parse the response body into a list of AllChatData objects
+          final allChatData = responseData.map((data) {
+            return AllChatData(
+              userName: data['userName'],
+              sender: data['sender'],
+              message: data['message'],
+              time: data['time'],
+              isRead: data['isRead'],
+              userId: data['userId'],
+            );
+          }).toList();
+          yield allChatData;
+        } else {
+          // Error handling
+          throw Exception('Failed to get all chat data');
+        }
       } catch (e) {
         log(e.toString());
-        // Handle error or break the loop if necessary
-        break;
+        // Handle error or break the stream if necessary
       }
-    }
+    });
   }
-
-  // List<Map<String, dynamic>> chats = [
-  //   {
-  //     'userName': 'User #12315678',
-  //     'sender': 'User #12315678',
-  //     'message': 'I\'m very sad. My code are not workin...',
-  //     'time': '11:20 PM',
-  //     'isRead': false,
-  //   },
-  //   {
-  //     'userName': 'User #12325678',
-  //     'sender': 'UserA',
-  //     'message': 'Don\'t give up',
-  //     'time': '11:18 PM',
-  //     'isRead': true,
-  //   },
-  //   {
-  //     'userName': 'User #12335678',
-  //     'sender': 'User #12335678',
-  //     'message': 'I\'ve just broken up with my girlfrien...',
-  //     'time': '10:59 PM',
-  //     'isRead': false,
-  //   },
-  //   {
-  //     'userName': 'User #12345678',
-  //     'sender': 'User #12345678',
-  //     'message': 'I am so tired :(',
-  //     'time': '10:55 PM',
-  //     'isRead': true,
-  //   },
-  //   {
-  //     'userName': 'User #12345378',
-  //     'sender': 'Dr.Witthaya',
-  //     'message': 'You should exercises m...',
-  //     'time': 'Yesterday',
-  //     'isRead': true,
-  //   },
-  //   {
-  //     'userName': 'User #12335378',
-  //     'sender': 'Dr.Pornpimon',
-  //     'message': 'I understand you and...',
-  //     'time': 'Saturday',
-  //     'isRead': true,
-  //   },
-  //   {
-  //     'userName': 'User #12335658',
-  //     'sender': 'User #12335658',
-  //     'message': 'Hello',
-  //     'time': '22/5',
-  //     'isRead': false,
-  //   },
-  // ];
 
   @override
   Widget build(BuildContext context) {
@@ -213,7 +192,9 @@ class _HealTalkPsyAllChatState extends State<HealTalkPsyAllChat> {
                                   border: Border.all(
                                     color: (snapshot.data != null &&
                                             snapshot.data!.length > index &&
-                                            snapshot.data![index].isRead)
+                                            (snapshot.data![index].isRead ||
+                                                snapshot.data![index].sender ==
+                                                    'UserA'))
                                         ? Colors.grey.shade400
                                         : Colors.deepPurple,
                                     width: 1,
@@ -334,16 +315,18 @@ class _HealTalkPsyAllChatState extends State<HealTalkPsyAllChat> {
                                                 style: TextStyle(
                                                   fontFamily: 'Poppins',
                                                   fontStyle: FontStyle.normal,
-                                                  fontWeight:
-                                                      snapshot.data != null &&
-                                                              snapshot.data!
-                                                                      .length >
-                                                                  index &&
-                                                              snapshot
-                                                                  .data![index]
-                                                                  .isRead
-                                                          ? FontWeight.w400
-                                                          : FontWeight.w500,
+                                                  fontWeight: snapshot.data !=
+                                                              null &&
+                                                          snapshot.data!
+                                                                  .length >
+                                                              index &&
+                                                          snapshot.data![index]
+                                                              .isRead &&
+                                                          snapshot.data![index]
+                                                                  .sender !=
+                                                              'UserA'
+                                                      ? FontWeight.w400
+                                                      : FontWeight.w500,
                                                   fontSize: 14,
                                                   height:
                                                       1.5, // Adjust line height as needed (line height = font size * line height factor)
@@ -355,7 +338,10 @@ class _HealTalkPsyAllChatState extends State<HealTalkPsyAllChat> {
                                         Visibility(
                                           visible: snapshot.data != null &&
                                                   snapshot.data!.length > index
-                                              ? !snapshot.data![index].isRead
+                                              ? !snapshot.data![index].isRead &&
+                                                  snapshot.data![index]
+                                                          .sender !=
+                                                      'UserA'
                                               : false,
                                           child: const CircleAvatar(
                                             maxRadius: 7,
