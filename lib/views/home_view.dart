@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:healjai/constants/color.dart';
 import 'package:healjai/constants/routes.dart';
-import 'package:healjai/services/auth/auth_backend_service.dart';
+import 'package:healjai/services/auth/auth.dart';
 import 'package:healjai/utilities/custom_navbar.dart';
 
 class HomeView extends StatefulWidget {
