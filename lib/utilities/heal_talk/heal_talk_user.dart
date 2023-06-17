@@ -1,10 +1,12 @@
+import 'dart:convert';
 import 'dart:developer';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:healjai/constants/color.dart';
-import 'package:healjai/services/cloud/firebase_cloud_storage.dart';
 import 'package:healjai/utilities/types.dart';
+import 'package:http/http.dart' as http;
 
 class HealTalkUser extends StatefulWidget {
   const HealTalkUser({super.key});
@@ -19,45 +21,6 @@ class _HealTalkUserState extends State<HealTalkUser> {
   bool isSending = false;
 
   Stream<List<UserChatMessageData>>? messages;
-
-  // List<Map<String, dynamic>> messages = [
-  //   {
-  //     'message':
-  //         'Thank you for sharing that with me. It takes courage to open up about your struggles. It\'s important to remember that you don\'t have to go through this alone. Many people experience similar feelings of wearing a mask and hiding their true emotions. I\'m here to provide a safe and nonjudgmental space where we can explore what you\'re going through. Together, we can work towards understanding your struggles and finding healthier ways to cope. Is there anything specific you would like to discuss or any areas you feel comfortable starting with?',
-  //     'sender': 'Dr. Pornpimon',
-  //     'time': '11:05',
-  //     'date': 'Fri, 26/5',
-  //     'read': true,
-  //     'profilePic':
-  //         'https://s3.amazonaws.com/freestock-prod/450/freestock_49658134.jpg',
-  //   },
-  //   {
-  //     'message':
-  //         'I didn\'t expect anyone to notice, but it\'s been tough. I feel like I\'m constantly wearing a mask, pretending everything is okay. But inside, I\'m really struggling.',
-  //     'sender': 'UserA',
-  //     'time': '11:00',
-  //     'date': 'Fri, 26/5',
-  //     'read': true,
-  //   },
-  //   {
-  //     'message':
-  //         'Hello, I\'m here to support you. It seems like you\'re feeling sad. Is there something specific on your mind that you\'d like to talk about today? Remember, I\'m here to listen and help you navigate through any challenges you may be facing.',
-  //     'sender': 'Dr. Wararattana',
-  //     'time': '11:05',
-  //     'date': 'Thu, 25/5',
-  //     'read': true,
-  //     'profilePic':
-  //         'https://th.bing.com/th/id/R.58f60f6b81ae6d054b6b4910a9771fbf?rik=%2fKjN%2fqPR7wXaUw&pid=ImgRaw&r=0',
-  //   },
-  //   {
-  //     'message': 'Hello 🥲🥲🥲',
-  //     'sender': 'UserA',
-  //     'time': '11:00',
-  //     'date': 'Thu, 25/5',
-  //     'read': true,
-  //   },
-  //   // Add more messages with profile pictures
-  // ];
 
   TextEditingController textController = TextEditingController();
 
@@ -80,18 +43,53 @@ class _HealTalkUserState extends State<HealTalkUser> {
     messages = getChatDataStream();
   }
 
-  Stream<List<UserChatMessageData>> getChatDataStream() async* {
-    while (true) {
+  Stream<List<UserChatMessageData>> getChatDataStream() {
+    String apiUrl = 'http://4.194.248.57:3000/api/getUserChat';
+    final currentUserId = FirebaseAuth.instance.currentUser!.uid;
+
+    // Construct the query parameters
+    Map<String, dynamic> queryParams = {
+      'tagNumber': '',
+      'isPsychiatrist': false.toString(),
+      'currentUserId': currentUserId,
+    };
+
+    // Construct the API URL with query parameters
+    Uri url = Uri.parse(apiUrl).replace(queryParameters: queryParams);
+    return Stream.periodic(const Duration(seconds: 1)).asyncExpand((_) async* {
       try {
-        List<UserChatMessageData> userChatMessageData =
-            await FirebaseCloudStorage().getUserChat();
-        yield userChatMessageData;
+        // Make the HTTP GET request
+        final response = await http.get(url);
+        // Successful response
+        List<UserChatMessageData> chatData = [];
+
+        // Parse the response body into a list of UserChatMessageData objects
+        List<dynamic> responseData = json.decode(response.body);
+        for (var data in responseData) {
+          UserChatMessageData chatMessage = UserChatMessageData(
+            date: data['date'],
+            message: data['message'],
+            profilePic: data['profilePic'],
+            read: data['read'],
+            sender: data['sender'],
+            time: data['time'],
+          );
+          chatData.add(chatMessage);
+        }
+
+        if (!canSend && textController.text.isNotEmpty) {
+          setState(() {
+            isSending = false;
+            textController.clear();
+          });
+        }
+
+        yield chatData;
       } catch (e) {
         log(e.toString());
-        // Handle error or break the loop if necessary
-        break;
+        // Handle error or break the stream if necessary
       }
-    }
+    });
   }
 
   void _scrollToBottom() {
@@ -494,7 +492,7 @@ class _HealTalkUserState extends State<HealTalkUser> {
                                                   bottom: 0.0,
                                                   right: 0.0,
                                                   child: TextButton(
-                                                    onPressed: sendMessage,
+                                                    onPressed: sendChatMessage,
                                                     child: const Text(
                                                       'SEND',
                                                       style: TextStyle(
@@ -506,6 +504,25 @@ class _HealTalkUserState extends State<HealTalkUser> {
                                                             FontWeight.w600,
                                                         fontSize: 18.0,
                                                       ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              Visibility(
+                                                visible: isSending,
+                                                child: Positioned(
+                                                  bottom: 0.0,
+                                                  right: 0.0,
+                                                  child: TextButton(
+                                                    onPressed: sendChatMessage,
+                                                    child: const SizedBox(
+                                                      width: 20,
+                                                      height: 20,
+                                                      child:
+                                                          CircularProgressIndicator(
+                                                              color:
+                                                                  primaryPurple,
+                                                              strokeWidth: 2),
                                                     ),
                                                   ),
                                                 ),
@@ -533,14 +550,38 @@ class _HealTalkUserState extends State<HealTalkUser> {
     );
   }
 
-  void sendMessage() async {
-    _scrollToBottom();
-    String message = textController.text;
-    setState(() {
-      canSend = false;
-      textController.clear();
-    });
-    await FirebaseCloudStorage().createUserChatMessage(message);
+  Future<void> sendChatMessage() async {
+    try {
+      _scrollToBottom();
+      final userId = FirebaseAuth.instance.currentUser!.uid;
+      String message = textController.text;
+      setState(() {
+        isSending = true;
+        canSend = false;
+      });
+
+      const url =
+          'http://4.194.248.57:3000/api/createUserChatMessage'; // Replace with your actual backend URL
+
+      final response = await http.post(Uri.parse(url),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: jsonEncode({
+            'userId': userId,
+            'text': message,
+          }));
+
+      if (response.statusCode == 200) {
+        // Message sent successfully
+        log('Message sent successfully');
+      } else {
+        // Failed to send message
+        log('Failed to send message');
+      }
+    } catch (error) {
+      log('Error sending message: $error');
+    }
   }
 
   String formatTime(DateTime time) {
