@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:math';
-// import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 
@@ -38,77 +37,53 @@ Future<int> getUniqueRandomNumber() async {
     randomNum = generateRandomNumber();
     isDuplicate = await checkIfNumberExists(randomNum.toString());
   }
-
   return randomNum;
 }
 
-// Future<bool> checkIfNumberExists(String number) async {
-//   QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-//       .collection('UserTagNumber')
-//       .where('userTagNumber', isEqualTo: number)
-//       .get();
-
-//   return querySnapshot.docs.isNotEmpty;
-// }
 Future<bool> checkIfNumberExists(String number) async {
   final url = 'http://4.194.248.57:3000/api/checkIfNumberExists?number=$number';
   try {
     final response = await http.get(Uri.parse(url));
-
     if (response.statusCode == 200) {
       // Request successful
-      return true;
+      dynamic jsonData = json.decode(response.body);
+      bool numberExists = jsonData['exists'] ??
+          false; // Extract the 'exists' field from the response
+      return numberExists;
     } else {
       // Request failed
-      return false;
+      return true;
     }
-  } catch (error) {
+  } catch (_) {
     // Error occurred
-    print('Error during checkIfNumberExists API request: $error');
-    return false;
+    return true;
   }
 }
-
-// Future<void> saveUserTagNumber(String userId, String tagNumber) async {
-//   await FirebaseFirestore.instance
-//       .collection('UserTagNumber')
-//       .doc(userId)
-//       .set({'userTagNumber': tagNumber});
-// }
 
 Future<void> saveUserTagNumber(String userId, String tagNumber) async {
   const url = 'http://4.194.248.57:3000/api/saveUserTagNumber';
   try {
-    await http.post(Uri.parse(url), 
-    headers: {'Content-Type':'application/json'},
-    body: jsonEncode({
-      'userId': userId,
-      'tagNumber': tagNumber,
-    }));
-  } catch (error) {
+    await http.post(Uri.parse(url),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'userId': userId,
+          'tagNumber': tagNumber,
+        }));
+  } catch (_) {
     // Error occurred
-    print('Error during saveUserTagNumber API request: $error');
   }
 }
-
-// Future<void> saveUserData(String userId) async {
-//   await FirebaseFirestore.instance
-//       .collection('User')
-//       .doc(userId)
-//       .set({'isPsychiatrist': false});
-// }
 
 Future<void> saveUserData(String userId) async {
   const url = 'http://4.194.248.57:3000/api/saveUserData';
   try {
-    await http.post(Uri.parse(url), 
-    headers: {'Content-Type':'application/json'},
-    body: jsonEncode({
-      'userId': userId,
-    }));
-  } catch (error) {
+    await http.post(Uri.parse(url),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'userId': userId,
+        }));
+  } catch (_) {
     // Error occurred
-    print('Error during saveUserData API request: $error');
   }
 }
 

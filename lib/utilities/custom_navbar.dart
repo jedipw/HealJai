@@ -5,7 +5,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
   final Color selectedItemColor;
   final ValueChanged<int> onTap;
 
-  CustomBottomNavigationBar({
+  const CustomBottomNavigationBar({super.key, 
     required this.items,
     required this.selectedItemColor,
     required this.onTap,
