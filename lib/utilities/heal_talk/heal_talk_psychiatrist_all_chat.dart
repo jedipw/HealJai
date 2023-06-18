@@ -194,7 +194,7 @@ class _HealTalkPsyAllChatState extends State<HealTalkPsyAllChat> {
                                             snapshot.data!.length > index &&
                                             (snapshot.data![index].isRead ||
                                                 snapshot.data![index].sender ==
-                                                    'UserA'))
+                                                    'You'))
                                         ? Colors.grey.shade400
                                         : Colors.deepPurple,
                                     width: 1,
@@ -267,7 +267,7 @@ class _HealTalkPsyAllChatState extends State<HealTalkPsyAllChat> {
                                                                 .sender &&
                                                         snapshot.data![index]
                                                                 .sender !=
-                                                            'UserA',
+                                                            'You',
                                                 child: Text(
                                                   snapshot.data != null &&
                                                           snapshot.data!
@@ -292,7 +292,7 @@ class _HealTalkPsyAllChatState extends State<HealTalkPsyAllChat> {
                                                             index &&
                                                         snapshot.data![index]
                                                                 .sender ==
-                                                            'UserA',
+                                                            'You',
                                                 child: const Text(
                                                   'You: ',
                                                   style: TextStyle(
@@ -324,7 +324,7 @@ class _HealTalkPsyAllChatState extends State<HealTalkPsyAllChat> {
                                                               .isRead &&
                                                           snapshot.data![index]
                                                                   .sender !=
-                                                              'UserA'
+                                                              'You'
                                                       ? FontWeight.w400
                                                       : FontWeight.w500,
                                                   fontSize: 14,
@@ -341,7 +341,7 @@ class _HealTalkPsyAllChatState extends State<HealTalkPsyAllChat> {
                                               ? !snapshot.data![index].isRead &&
                                                   snapshot.data![index]
                                                           .sender !=
-                                                      'UserA'
+                                                      'You'
                                               : false,
                                           child: const CircleAvatar(
                                             maxRadius: 7,
