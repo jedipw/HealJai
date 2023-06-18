@@ -38,7 +38,7 @@ Additionally, the following functions are functional only for the screen:
 3. Run `flutterfire configure` in terminal
 ##### Set up the path to the backend(choose one method):
 - Contact us to use our Microsoft Virtual Machine for server hosting.
-- Use your own machine to run the backend server, and modify the "defaultURL" to "http://localhost:3000".  
+- Use your own machine to run the backend server and modify the "defaultURL" to "http://localhost:3000".  
    (Note: Don't forget to run the backend first; see the installation manual in README.md of backend-HealJai.)
 
 ## 3. Developer's recommendation
