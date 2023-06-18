@@ -21,6 +21,7 @@ class _HealTalkUserState extends State<HealTalkUser> {
   late IO.Socket _socket;
   final ScrollController _scrollController = ScrollController();
   final userId = FirebaseAuth.instance.currentUser!.uid;
+  bool isLoading = true;
 
   _connectSocket() {
     _socket.onConnect((data) => log('Connection established'));
@@ -96,7 +97,9 @@ class _HealTalkUserState extends State<HealTalkUser> {
 
       setState(() {
         messages = chatData;
+        isLoading = false;
       });
+      _socket.emit(userId, {});
     } catch (e) {
       log(e.toString());
       // Handle error or break the stream if necessary
