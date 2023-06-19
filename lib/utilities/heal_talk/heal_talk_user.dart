@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:healjai/constants/color.dart';
+import 'package:healjai/constants/routes.dart';
 import 'package:healjai/utilities/types.dart';
 import 'package:http/http.dart' as http;
 // ignore: library_prefixes
@@ -57,7 +58,7 @@ class _HealTalkUserState extends State<HealTalkUser> {
   void initState() {
     super.initState();
     _socket = IO.io(
-        'http://4.194.248.57:3000',
+        defaultURL,
         IO.OptionBuilder()
             .setTransports(['websocket'])
             .disableAutoConnect()
@@ -68,7 +69,7 @@ class _HealTalkUserState extends State<HealTalkUser> {
   }
 
   Future<void> getChatData(String mode) async {
-    String apiUrl = 'http://4.194.248.57:3000/api/getUserChat';
+    String apiUrl = '$defaultURL/api/getUserChat';
     final currentUserId = FirebaseAuth.instance.currentUser!.uid;
 
     // Construct the query parameters
@@ -548,7 +549,7 @@ class _HealTalkUserState extends State<HealTalkUser> {
       });
 
       const url =
-          'http://4.194.248.57:3000/api/createUserChatMessage'; // Replace with your actual backend URL
+          '$defaultURL/api/createUserChatMessage'; // Replace with your actual backend URL
 
       final response = await http.post(Uri.parse(url),
           headers: {
