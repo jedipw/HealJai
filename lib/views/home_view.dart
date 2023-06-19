@@ -109,7 +109,7 @@ class _HomeViewState extends State<HomeView> {
                         icon: InkWell(
                           onTap: () {},
                           child: Image.asset(
-                            'assets/icons/noti.png', // Replace with the path to your custom image
+                            'assets/icons/noti.png',
                             width: 28,
                             height: 28,
                           ),
@@ -150,10 +150,6 @@ class _HomeViewState extends State<HomeView> {
             )
           : Column(
               children: [
-                // const Divider(
-                //   height: 2,
-                //   color: Colors.grey,
-                // ),
                 Expanded(
                   child: ListView.builder(
                     itemCount: 3, // Number of posts
@@ -238,7 +234,7 @@ class _HomeViewState extends State<HomeView> {
                                                   fontWeight: FontWeight.w500,
                                                   fontFamily: 'Poppins'),
                                             ),
-                                            // Add any additional text or widgets here
+                                
                                           ],
                                         ),
                                       ],
@@ -248,8 +244,6 @@ class _HomeViewState extends State<HomeView> {
                                   SizedBox(
                                     height: 376,
                                     child: Container(
-                                      // width: MediaQuery.of(context).size.width, // Set the width to fit the screen
-                                      // height: 376,
                                       decoration: BoxDecoration(
                                         image: DecorationImage(
                                           image: AssetImage(
@@ -337,7 +331,7 @@ class _HomeViewState extends State<HomeView> {
                         icon: InkWell(
                           onTap: () {},
                           child: Image.asset(
-                            'assets/icons/noti.png', // Replace with the path to your custom image
+                            'assets/icons/noti.png',
                             width: 28,
                             height: 28,
                           ),
@@ -377,7 +371,6 @@ class _HomeViewState extends State<HomeView> {
               ],
             ),
 
-      // Replace with your desired body content
     );
   }
 }

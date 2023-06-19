@@ -181,14 +181,6 @@ class PaymentStepTwo extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 20),
-        /*Row(children: [
-              Image.asset(
-                'assets/images/mastercard.png', 
-                width: 80,
-                height: 80,
-                fit: BoxFit.cover,
-              ),
-            ]),*/
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: const <Widget>[
