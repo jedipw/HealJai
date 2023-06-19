@@ -22,7 +22,7 @@ Additionally, the following functions are functional only for the screen:
 ## 2. First time setup
 ### A.) Normal setup:
 1. Run `flutter pub get` in terminal
-2. If you use your own machine to run the backend server, you need to modify the "defaultURL" to "http://localhost:3000".  
+2. If you use your own machine to run the backend server, you need to modify the "defaultURL" in "HealJai\lib\constants\routes.dart" to "http://localhost:3000".  
    (Note: Don't forget to run the backend first; see the installation manual in README.md of backend-HealJai.)
 3. Select device that you want to run
 4. Select run without debugging
@@ -38,7 +38,7 @@ Additionally, the following functions are functional only for the screen:
 3. Run `flutterfire configure` in terminal
 ##### Set up the path to the backend(choose one method):
 - Contact us to use our Microsoft Virtual Machine for server hosting.
-- Use your own machine to run the backend server and modify the "defaultURL" in "HealJai\lib\constants\routes.dart"  to `"http://localhost:3000"`.  
+- Use your own machine to run the backend server and modify the "defaultURL" in "HealJai\lib\constants\routes.dart" to `"http://localhost:3000"`.  
    (Note: Don't forget to run the backend first; see the installation manual in README.md of backend-HealJai.)
 
 ## 3. Developer's recommendation
