@@ -27,7 +27,9 @@ class _HealTalkUserState extends State<HealTalkUser> {
     _socket.onConnect((data) => log('Connection established'));
     _socket.onConnectError((data) => log('Connect Error: $data'));
     _socket.onDisconnect((data) => log('Socket.IO server disconnected'));
-    _socket.on(userId, (data) => getChatData());
+    _socket.on('userMessage', (data) => getChatData('user'));
+    _socket.on('psycMessage', (data) => getChatData('psyc'));
+    _socket.on('readMessage', (data) => getChatData('read'));
   }
 
   final FocusNode _focusNode = FocusNode();
@@ -47,22 +49,25 @@ class _HealTalkUserState extends State<HealTalkUser> {
     // Dispose the ScrollController when it's no longer needed
     _scrollController.dispose();
     _focusNode.dispose();
+    _socket.dispose();
     super.dispose();
   }
 
   @override
   void initState() {
     super.initState();
-
     _socket = IO.io(
         'http://4.194.248.57:3000',
-        IO.OptionBuilder().setTransports(['websocket']).setQuery(
-            {'username': userId}).build());
+        IO.OptionBuilder()
+            .setTransports(['websocket'])
+            .disableAutoConnect()
+            .build());
     _connectSocket();
-    getChatData();
+    _socket.connect();
+    getChatData('psyc');
   }
 
-  Future<void> getChatData() async {
+  Future<void> getChatData(String mode) async {
     String apiUrl = 'http://4.194.248.57:3000/api/getUserChat';
     final currentUserId = FirebaseAuth.instance.currentUser!.uid;
 
@@ -99,7 +104,9 @@ class _HealTalkUserState extends State<HealTalkUser> {
         messages = chatData;
         isLoading = false;
       });
-      _socket.emit(userId, {});
+      if (mode == 'psyc') {
+        _socket.emit('readMessage', {});
+      }
     } catch (e) {
       log(e.toString());
       // Handle error or break the stream if necessary
@@ -558,7 +565,7 @@ class _HealTalkUserState extends State<HealTalkUser> {
         setState(() {
           isSending = false;
           textController.clear();
-          _socket.emit(userId, {});
+          _socket.emit('userMessage', {});
         });
       } else {
         // Failed to send message

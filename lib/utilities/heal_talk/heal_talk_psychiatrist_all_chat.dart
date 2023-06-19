@@ -19,26 +19,31 @@ class HealTalkPsyAllChat extends StatefulWidget {
 
 class _HealTalkPsyAllChatState extends State<HealTalkPsyAllChat> {
   List<AllChatData> chats = [];
-  late IO.Socket _socket;
+  late IO.Socket _socketAllChat;
   final userId = FirebaseAuth.instance.currentUser!.uid;
   bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _socket = IO.io(
+    _socketAllChat = IO.io(
         'http://4.194.248.57:3000',
-        IO.OptionBuilder().setTransports(['websocket']).setQuery(
-            {'username': userId}).build());
-    getAllChatsData();
+        IO.OptionBuilder()
+            .setTransports(['websocket'])
+            .disableAutoConnect()
+            .build());
     _connectSocket();
+    _socketAllChat.connect();
+    getAllChatsData();
   }
 
   _connectSocket() {
-    _socket.onConnect((data) => log('Connection established'));
-    _socket.onConnectError((data) => log('Connect Error: $data'));
-    _socket.onDisconnect((data) => log('Socket.IO server disconnected'));
-    _socket.on('allChat', (data) => getAllChatsData());
+    _socketAllChat.onConnect((data) => log('Connection established'));
+    _socketAllChat.onConnectError((data) => log('Connect Error: $data'));
+    _socketAllChat.onDisconnect((data) => log('Socket.IO server disconnected'));
+    _socketAllChat.on('userMessage', (data) => getAllChatsData());
+    _socketAllChat.on('psycMessage', (data) => getAllChatsData());
+    _socketAllChat.on('readMessage', (data) => getAllChatsData());
   }
 
   Future<void> getAllChatsData() async {
@@ -189,6 +194,7 @@ class _HealTalkPsyAllChatState extends State<HealTalkPsyAllChat> {
                           itemBuilder: (BuildContext context, int index) {
                             return GestureDetector(
                               onTap: () {
+                                _socketAllChat.dispose();
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -196,7 +202,17 @@ class _HealTalkPsyAllChatState extends State<HealTalkPsyAllChat> {
                                       userName: chats[index].userName,
                                     ),
                                   ),
-                                );
+                                ).then((_) {
+                                  _socketAllChat = IO.io(
+                                      'http://4.194.248.57:3000',
+                                      IO.OptionBuilder()
+                                          .setTransports(['websocket'])
+                                          .disableAutoConnect()
+                                          .build());
+                                  _connectSocket();
+                                  getAllChatsData();
+                                  _socketAllChat.connect();
+                                });
                               },
                               child: Container(
                                 decoration: BoxDecoration(

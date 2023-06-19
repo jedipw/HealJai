@@ -30,7 +30,9 @@ class _HealTalkPsyChatState extends State<HealTalkPsyChat> {
     _socket.onConnect((data) => log('Connection established'));
     _socket.onConnectError((data) => log('Connect Error: $data'));
     _socket.onDisconnect((data) => log('Socket.IO server disconnected'));
-    _socket.on(userId, (data) => getChatData());
+    _socket.on('userMessage', (data) => getChatData('user'));
+    _socket.on('psycMessage', (data) => getChatData('psyc'));
+    _socket.on('readMessage', (data) => getChatData('read'));
   }
 
   Future<void> getUserId(String number) async {
@@ -50,7 +52,7 @@ class _HealTalkPsyChatState extends State<HealTalkPsyChat> {
     }
   }
 
-  Future<void> getChatData() async {
+  Future<void> getChatData(String mode) async {
     String apiUrl = 'http://4.194.248.57:3000/api/getUserChat';
 
     final currentUserId = FirebaseAuth.instance.currentUser!.uid;
@@ -87,7 +89,10 @@ class _HealTalkPsyChatState extends State<HealTalkPsyChat> {
         messages = chatData;
         isLoading = false;
       });
-      _socket.emit(userId, {});
+
+      if (mode == 'user') {
+        _socket.emit('readMessage', {});
+      }
     } catch (e) {
       log(e.toString());
       // Handle error or break the stream if necessary
@@ -112,13 +117,17 @@ class _HealTalkPsyChatState extends State<HealTalkPsyChat> {
   @override
   void initState() {
     super.initState();
-    getChatData();
+    getChatData('user');
     getUserId(widget.userName.substring(6)).then((_) {
+      log(userId);
       _socket = IO.io(
           'http://4.194.248.57:3000',
-          IO.OptionBuilder().setTransports(['websocket']).setQuery(
-              {'username': userId}).build());
+          IO.OptionBuilder()
+              .setTransports(['websocket'])
+              .disableAutoConnect()
+              .build());
       _connectSocket();
+      _socket.connect();
     });
   }
 
@@ -164,6 +173,7 @@ class _HealTalkPsyChatState extends State<HealTalkPsyChat> {
                     size: 30,
                   ),
                   onPressed: () {
+                    _socket.dispose();
                     Navigator.pop(context);
                   },
                 ),
@@ -612,7 +622,7 @@ class _HealTalkPsyChatState extends State<HealTalkPsyChat> {
       setState(() {
         isSending = false;
         textController.clear();
-        _socket.emit(userId, {});
+        _socket.emit('psycMessage', {});
       });
     } else {
       // Failed to send message
