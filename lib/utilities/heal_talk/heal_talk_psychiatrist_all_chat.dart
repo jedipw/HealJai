@@ -7,6 +7,8 @@ import 'package:healjai/utilities/heal_talk/heal_talk_psychiatrist_chat.dart';
 import 'package:healjai/utilities/types.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+// ignore: library_prefixes
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class HealTalkPsyAllChat extends StatefulWidget {
   const HealTalkPsyAllChat({super.key});
@@ -16,15 +18,35 @@ class HealTalkPsyAllChat extends StatefulWidget {
 }
 
 class _HealTalkPsyAllChatState extends State<HealTalkPsyAllChat> {
-  Stream<List<AllChatData>>? chats;
+  List<AllChatData> chats = [];
+  late IO.Socket _socketAllChat;
+  final userId = FirebaseAuth.instance.currentUser!.uid;
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    chats = getAllChatsDataStream();
+    _socketAllChat = IO.io(
+        'http://4.194.248.57:3000',
+        IO.OptionBuilder()
+            .setTransports(['websocket'])
+            .disableAutoConnect()
+            .build());
+    _connectSocket();
+    _socketAllChat.connect();
+    getAllChatsData();
   }
 
-  Stream<List<AllChatData>> getAllChatsDataStream() {
+  _connectSocket() {
+    _socketAllChat.onConnect((data) => log('Connection established'));
+    _socketAllChat.onConnectError((data) => log('Connect Error: $data'));
+    _socketAllChat.onDisconnect((data) => log('Socket.IO server disconnected'));
+    _socketAllChat.on('userMessage', (data) => getAllChatsData());
+    _socketAllChat.on('psycMessage', (data) => getAllChatsData());
+    _socketAllChat.on('readMessage', (data) => getAllChatsData());
+  }
+
+  Future<void> getAllChatsData() async {
     const apiUrl = 'http://4.194.248.57:3000/api/getAllChat';
     final currentUserId = FirebaseAuth.instance.currentUser!.uid;
 
@@ -35,101 +57,95 @@ class _HealTalkPsyAllChatState extends State<HealTalkPsyAllChat> {
 
     // Construct the API URL with query parameters
     final url = Uri.parse(apiUrl).replace(queryParameters: queryParams);
+    try {
+      // Make the HTTP GET request
+      final response = await http.get(url);
+      if (response.statusCode == 200) {
+        // Successful response
+        final responseData = json.decode(response.body) as List<dynamic>;
 
-    return Stream.periodic(const Duration(seconds: 1)).asyncExpand((_) async* {
-      try {
-        // Make the HTTP GET request
-        final response = await http.get(url);
-        if (response.statusCode == 200) {
-          // Successful response
-          final responseData = json.decode(response.body) as List<dynamic>;
-
-          // Parse the response body into a list of AllChatData objects
-          final allChatData = responseData.map((data) {
-            return AllChatData(
-              userName: data['userName'],
-              sender: data['sender'],
-              message: data['message'],
-              time: data['time'],
-              isRead: data['isRead'],
-              userId: data['userId'],
-            );
-          }).toList();
-          yield allChatData;
-        } else {
-          // Error handling
-          throw Exception('Failed to get all chat data');
-        }
-      } catch (e) {
-        log(e.toString());
-        // Handle error or break the stream if necessary
+        // Parse the response body into a list of AllChatData objects
+        final allChatData = responseData.map((data) {
+          return AllChatData(
+            userName: data['userName'],
+            sender: data['sender'],
+            message: data['message'],
+            time: data['time'],
+            isRead: data['isRead'],
+            userId: data['userId'],
+          );
+        }).toList();
+        setState(() {
+          chats = allChatData;
+          isLoading = false;
+        });
+      } else {
+        // Error handling
+        throw Exception('Failed to get all chat data');
       }
-    });
+    } catch (e) {
+      log(e.toString());
+      // Handle error or break the stream if necessary
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(71.0),
-        child: Container(
-          decoration: const BoxDecoration(
-            border: Border(
-              bottom: BorderSide(
-                color: grayDadada,
-                width: 1.0,
-              ),
-            ),
-          ),
-          child: AppBar(
-            backgroundColor: Colors.white,
-            elevation: 0.0,
-            leading: Padding(
-              padding: const EdgeInsets.fromLTRB(20, 15, 0, 0),
-              child: IconButton(
-                icon: const Icon(
-                  Icons.arrow_back_ios,
-                  color: primaryPurple,
-                  size: 30,
+        backgroundColor: Colors.white,
+        appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(71.0),
+          child: Container(
+            decoration: const BoxDecoration(
+              border: Border(
+                bottom: BorderSide(
+                  color: grayDadada,
+                  width: 1.0,
                 ),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
               ),
             ),
-            title: const Padding(
-              padding: EdgeInsets.only(top: 20),
-              child: Align(
-                alignment: Alignment.centerLeft, // Align text to the left
-                child: Text(
-                  'HealTalk', // Add the word "HealTalk" here
-                  style: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontStyle: FontStyle.normal,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 24,
+            child: AppBar(
+              backgroundColor: Colors.white,
+              elevation: 0.0,
+              leading: Padding(
+                padding: const EdgeInsets.fromLTRB(20, 15, 0, 0),
+                child: IconButton(
+                  icon: const Icon(
+                    Icons.arrow_back_ios,
                     color: primaryPurple,
+                    size: 30,
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
+              title: const Padding(
+                padding: EdgeInsets.only(top: 20),
+                child: Align(
+                  alignment: Alignment.centerLeft, // Align text to the left
+                  child: Text(
+                    'HealTalk', // Add the word "HealTalk" here
+                    style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontStyle: FontStyle.normal,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 24,
+                      color: primaryPurple,
+                    ),
                   ),
                 ),
               ),
             ),
           ),
         ),
-      ),
-      body: StreamBuilder(
-          stream: chats,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
+        body: isLoading
+            ? const Center(
                 child: CircularProgressIndicator(
                   color: primaryPurple,
                 ),
-              );
-            } else if (snapshot.hasError) {
-              return Text('Error: ${snapshot.error}');
-            } else {
-              return SingleChildScrollView(
+              )
+            : SingleChildScrollView(
                 child: Padding(
                   padding: const EdgeInsets.all(25),
                   child: Column(
@@ -174,27 +190,36 @@ class _HealTalkPsyAllChatState extends State<HealTalkPsyAllChat> {
                         padding: const EdgeInsets.only(top: 15.0),
                         height: MediaQuery.of(context).size.height - 234,
                         child: ListView.builder(
-                          itemCount: snapshot.data?.length,
+                          itemCount: chats.length,
                           itemBuilder: (BuildContext context, int index) {
                             return GestureDetector(
                               onTap: () {
+                                _socketAllChat.dispose();
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => HealTalkPsyChat(
-                                      userName: snapshot.data![index].userName,
+                                      userName: chats[index].userName,
                                     ),
                                   ),
-                                );
+                                ).then((_) {
+                                  _socketAllChat = IO.io(
+                                      'http://4.194.248.57:3000',
+                                      IO.OptionBuilder()
+                                          .setTransports(['websocket'])
+                                          .disableAutoConnect()
+                                          .build());
+                                  _connectSocket();
+                                  getAllChatsData();
+                                  _socketAllChat.connect();
+                                });
                               },
                               child: Container(
                                 decoration: BoxDecoration(
                                   border: Border.all(
-                                    color: (snapshot.data != null &&
-                                            snapshot.data!.length > index &&
-                                            (snapshot.data![index].isRead ||
-                                                snapshot.data![index].sender ==
-                                                    'UserA'))
+                                    color: (chats.length > index &&
+                                            (chats[index].isRead ||
+                                                chats[index].sender == 'You'))
                                         ? Colors.grey.shade400
                                         : Colors.deepPurple,
                                     width: 1,
@@ -214,9 +239,8 @@ class _HealTalkPsyAllChatState extends State<HealTalkPsyAllChat> {
                                           MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
-                                          snapshot.data != null &&
-                                                  snapshot.data!.length > index
-                                              ? snapshot.data![index].userName
+                                          chats.length > index
+                                              ? chats[index].userName
                                               : '',
                                           style: const TextStyle(
                                             fontFamily: 'Poppins',
@@ -229,9 +253,8 @@ class _HealTalkPsyAllChatState extends State<HealTalkPsyAllChat> {
                                           ),
                                         ),
                                         Text(
-                                          snapshot.data != null &&
-                                                  snapshot.data!.length > index
-                                              ? snapshot.data![index].time
+                                          chats.length > index
+                                              ? chats[index].time
                                               : '',
                                           style: const TextStyle(
                                             fontFamily: 'Poppins',
@@ -256,24 +279,14 @@ class _HealTalkPsyAllChatState extends State<HealTalkPsyAllChat> {
                                           child: Row(
                                             children: [
                                               Visibility(
-                                                visible:
-                                                    snapshot.data != null &&
-                                                        snapshot.data!.length >
-                                                            index &&
-                                                        snapshot.data![index]
-                                                                .userName !=
-                                                            snapshot
-                                                                .data![index]
-                                                                .sender &&
-                                                        snapshot.data![index]
-                                                                .sender !=
-                                                            'UserA',
+                                                visible: chats.length > index &&
+                                                    chats[index].userName !=
+                                                        chats[index].sender &&
+                                                    chats[index].sender !=
+                                                        'You',
                                                 child: Text(
-                                                  snapshot.data != null &&
-                                                          snapshot.data!
-                                                                  .length >
-                                                              index
-                                                      ? '${snapshot.data![index].sender}: '
+                                                  chats.length > index
+                                                      ? '${chats[index].sender}: '
                                                       : '',
                                                   style: const TextStyle(
                                                     fontFamily: 'Poppins',
@@ -286,13 +299,9 @@ class _HealTalkPsyAllChatState extends State<HealTalkPsyAllChat> {
                                                 ),
                                               ),
                                               Visibility(
-                                                visible:
-                                                    snapshot.data != null &&
-                                                        snapshot.data!.length >
-                                                            index &&
-                                                        snapshot.data![index]
-                                                                .sender ==
-                                                            'UserA',
+                                                visible: chats.length > index &&
+                                                    chats[index].sender ==
+                                                        'You',
                                                 child: const Text(
                                                   'You: ',
                                                   style: TextStyle(
@@ -306,25 +315,17 @@ class _HealTalkPsyAllChatState extends State<HealTalkPsyAllChat> {
                                                 ),
                                               ),
                                               Text(
-                                                snapshot.data != null &&
-                                                        snapshot.data!.length >
-                                                            index
-                                                    ? snapshot
-                                                        .data![index].message
+                                                chats.length > index
+                                                    ? chats[index].message
                                                     : '',
                                                 style: TextStyle(
                                                   fontFamily: 'Poppins',
                                                   fontStyle: FontStyle.normal,
-                                                  fontWeight: snapshot.data !=
-                                                              null &&
-                                                          snapshot.data!
-                                                                  .length >
+                                                  fontWeight: chats.length >
                                                               index &&
-                                                          snapshot.data![index]
-                                                              .isRead &&
-                                                          snapshot.data![index]
-                                                                  .sender !=
-                                                              'UserA'
+                                                          chats[index].isRead &&
+                                                          chats[index].sender !=
+                                                              'You'
                                                       ? FontWeight.w400
                                                       : FontWeight.w500,
                                                   fontSize: 14,
@@ -336,12 +337,9 @@ class _HealTalkPsyAllChatState extends State<HealTalkPsyAllChat> {
                                           ),
                                         ),
                                         Visibility(
-                                          visible: snapshot.data != null &&
-                                                  snapshot.data!.length > index
-                                              ? !snapshot.data![index].isRead &&
-                                                  snapshot.data![index]
-                                                          .sender !=
-                                                      'UserA'
+                                          visible: chats.length > index
+                                              ? !chats[index].isRead &&
+                                                  chats[index].sender != 'You'
                                               : false,
                                           child: const CircleAvatar(
                                             maxRadius: 7,
@@ -360,9 +358,6 @@ class _HealTalkPsyAllChatState extends State<HealTalkPsyAllChat> {
                     ],
                   ),
                 ),
-              );
-            }
-          }),
-    );
+              ));
   }
 }
