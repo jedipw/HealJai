@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:healjai/constants/color.dart';
+import 'package:healjai/constants/routes.dart';
 import 'package:healjai/utilities/heal_talk/heal_talk_psychiatrist_all_chat.dart';
 import 'package:healjai/utilities/heal_talk/heal_talk_user.dart';
 import 'package:http/http.dart' as http;
@@ -35,7 +36,7 @@ class _HealTalkViewState extends State<HealTalkView> {
     try {
       final userId = FirebaseAuth.instance.currentUser!.uid;
       final url = Uri.parse(
-          'http://4.194.248.57:3000/api/getIsPsychiatrist?userId=$userId');
+          '$defaultURL/api/getIsPsychiatrist?userId=$userId');
       final response = await http.get(url);
 
       if (response.statusCode == 200 && mounted) {

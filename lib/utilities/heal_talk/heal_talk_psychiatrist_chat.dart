@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:healjai/constants/color.dart';
+import 'package:healjai/constants/routes.dart';
 import 'package:healjai/utilities/types.dart';
 import 'package:http/http.dart' as http;
 // ignore: library_prefixes
@@ -36,7 +37,7 @@ class _HealTalkPsyChatState extends State<HealTalkPsyChat> {
   }
 
   Future<void> getUserId(String number) async {
-    final url = 'http://4.194.248.57:3000/api/getUserIdFromTag?number=$number';
+    final url = '$defaultURL/api/getUserIdFromTag?number=$number';
     try {
       final response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {
@@ -53,7 +54,7 @@ class _HealTalkPsyChatState extends State<HealTalkPsyChat> {
   }
 
   Future<void> getChatData(String mode) async {
-    String apiUrl = 'http://4.194.248.57:3000/api/getUserChat';
+    String apiUrl = '$defaultURL/api/getUserChat';
 
     final currentUserId = FirebaseAuth.instance.currentUser!.uid;
 
@@ -121,7 +122,7 @@ class _HealTalkPsyChatState extends State<HealTalkPsyChat> {
     getUserId(widget.userName.substring(6)).then((_) {
       log(userId);
       _socket = IO.io(
-          'http://4.194.248.57:3000',
+          defaultURL,
           IO.OptionBuilder()
               .setTransports(['websocket'])
               .disableAutoConnect()
@@ -604,7 +605,7 @@ class _HealTalkPsyChatState extends State<HealTalkPsyChat> {
     });
 
     const url =
-        'http://4.194.248.57:3000/api/createPsychiatristChatMessage'; // Replace with your actual backend URL
+        '$defaultURL/api/createPsychiatristChatMessage'; // Replace with your actual backend URL
     final currentUserId = FirebaseAuth.instance.currentUser!.uid;
     final response = await http.post(Uri.parse(url),
         headers: {

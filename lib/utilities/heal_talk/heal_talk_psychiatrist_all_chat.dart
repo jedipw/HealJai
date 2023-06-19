@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:healjai/constants/color.dart';
+import 'package:healjai/constants/routes.dart';
 import 'package:healjai/utilities/heal_talk/heal_talk_psychiatrist_chat.dart';
 import 'package:healjai/utilities/types.dart';
 import 'package:http/http.dart' as http;
@@ -27,7 +28,7 @@ class _HealTalkPsyAllChatState extends State<HealTalkPsyAllChat> {
   void initState() {
     super.initState();
     _socketAllChat = IO.io(
-        'http://4.194.248.57:3000',
+        defaultURL,
         IO.OptionBuilder()
             .setTransports(['websocket'])
             .disableAutoConnect()
@@ -47,7 +48,7 @@ class _HealTalkPsyAllChatState extends State<HealTalkPsyAllChat> {
   }
 
   Future<void> getAllChatsData() async {
-    const apiUrl = 'http://4.194.248.57:3000/api/getAllChat';
+    const apiUrl = '$defaultURL/api/getAllChat';
     final currentUserId = FirebaseAuth.instance.currentUser!.uid;
 
     // Construct the query parameters
@@ -204,7 +205,7 @@ class _HealTalkPsyAllChatState extends State<HealTalkPsyAllChat> {
                                   ),
                                 ).then((_) {
                                   _socketAllChat = IO.io(
-                                      'http://4.194.248.57:3000',
+                                      defaultURL,
                                       IO.OptionBuilder()
                                           .setTransports(['websocket'])
                                           .disableAutoConnect()
