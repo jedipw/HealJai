@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
+import '../../constants/routes.dart';
 
 Future<bool> login(String email, String password) async {
   try {
@@ -41,7 +42,7 @@ Future<int> getUniqueRandomNumber() async {
 }
 
 Future<bool> checkIfNumberExists(String number) async {
-  final url = 'http://4.194.248.57:3000/api/checkIfNumberExists?number=$number';
+  final url = '$defaultURL/api/checkIfNumberExists?number=$number';
   try {
     final response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) {
@@ -61,7 +62,7 @@ Future<bool> checkIfNumberExists(String number) async {
 }
 
 Future<void> saveUserTagNumber(String userId, String tagNumber) async {
-  const url = 'http://4.194.248.57:3000/api/saveUserTagNumber';
+  const url = '$defaultURL/api/saveUserTagNumber';
   try {
     await http.post(Uri.parse(url),
         headers: {'Content-Type': 'application/json'},
@@ -75,7 +76,7 @@ Future<void> saveUserTagNumber(String userId, String tagNumber) async {
 }
 
 Future<void> saveUserData(String userId) async {
-  const url = 'http://4.194.248.57:3000/api/saveUserData';
+  const url = '$defaultURL/api/saveUserData';
   try {
     await http.post(Uri.parse(url),
         headers: {'Content-Type': 'application/json'},
